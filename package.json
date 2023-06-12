@@ -33,5 +33,9 @@
     "json": "^11.0.0",
     "typescript": "^5.1.3",
     "vite": "^4.3.9"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jyoung4242/Squeleto"
   }
 }
