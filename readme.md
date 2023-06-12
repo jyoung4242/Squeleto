@@ -8,6 +8,14 @@
 
 `Squeleto` is an simple utility to scaffold up a game using the Squeleto 2d game library....
 
+# 🔥 Getting started
+
+`npx squeleto` will run the utility, and the CLI tool will build out your new project
+
+--or--
+
+the CLI tool will download a tutorial demo for you to help learn the library API's
+
 <!-- # Demo on Youtube
 
 - https://youtu.be/m1zYOhrmdKk Javascript example
@@ -29,11 +37,3 @@
 - Dialog System
 
 Squeleto is powered by Vite
-
-# 🔥 Getting started
-
-`npx squeleto` will run the utility, and the CLI tool will build out your new project
-
---or--
-
-the CLI tool will download a tutorial demo for you to help learn the library API's
