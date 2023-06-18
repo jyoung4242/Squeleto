@@ -14,13 +14,6 @@ export type RendererConfig = {
   physicsFPS: number;
 };
 
-/*
- state: typeof RenderState,
-    objectRenderOrder: number,
-    storyFlags: any,
-    viweportsize: { width: number; aspectratio: number }
-*/
-
 export type renderType = Array<MapLayer | GameObject>;
 export const RenderState = {
   camera: Camera,
@@ -183,9 +176,9 @@ export class GameRenderer {
   //#region Maps
 
   static createMap(config: Array<MapConfig | GameMap>) {
-    config.forEach(cfg => {
+    config.forEach(async cfg => {
       if (cfg instanceof GameMap) GameRenderer.state.maps.maps.push(cfg);
-      else GameRenderer.state.maps.maps.push(GameMap.create(cfg));
+      else GameRenderer.state.maps.maps.push(await GameMap.create(cfg));
     });
   }
 
@@ -202,9 +195,6 @@ export class GameRenderer {
   static getMapSize() {
     return GameRenderer.state.maps.getCurrentMap.getMapSize();
   }
-
-  static runMapCutscene() {}
-
   //#endregion
 
   //#region Engine

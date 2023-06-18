@@ -19,6 +19,7 @@
   "dependencies": {
     "@clack/prompts": "^0.6.3",
     "@peasy-lib/peasy-assets": "^0.2.4",
+    "@peasy-lib/peasy-engine": "^0.3.0",
     "@peasy-lib/peasy-input": "^0.2.0",
     "@peasy-lib/peasy-states": "^0.1.2",
     "@peasy-lib/peasy-ui": "^0.9.46",

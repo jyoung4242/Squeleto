@@ -2,6 +2,7 @@ import { Howl } from "howler";
 
 class HowlManager {
   static sounds = new Map<string, Howl>();
+  static currentTrack: any;
 
   static register(music: { name: string; src: string; gain?: number }) {
     let gain;
@@ -12,7 +13,8 @@ class HowlManager {
   }
 
   static play(music: string) {
-    HowlManager.sounds.get(music)?.play();
+    HowlManager.currentTrack = HowlManager.sounds.get(music);
+    HowlManager.currentTrack.play();
   }
 
   static clear() {
@@ -20,5 +22,14 @@ class HowlManager {
   }
 }
 
-export class BGM extends HowlManager {}
+export class BGM extends HowlManager {
+  static play(music: string) {
+    if ((HowlManager.currentTrack as Howl).playing() == true) {
+      (HowlManager.currentTrack as Howl).fade(1.0, 0.0, 500);
+    }
+    HowlManager.currentTrack = HowlManager.sounds.get(music);
+    HowlManager.currentTrack.play();
+  }
+}
+
 export class SFX extends HowlManager {}

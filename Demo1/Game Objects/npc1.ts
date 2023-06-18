@@ -1,15 +1,12 @@
 import { AnimationSequence, Spritesheet } from "../../_Squeleto/Spritesheet";
-import { StandEvent } from "../Events/stand";
 import { WalkEvent } from "../Events/walk";
 import { EventManager } from "../../_Squeleto/EventManager";
 import { CollisionManager, direction } from "../../_Squeleto/CollisionManager";
 import { GameMap } from "../../_Squeleto/MapManager";
 import { State, States } from "@peasy-lib/peasy-states";
-import { LogEvent } from "../Events/log";
 import { DialogEvent } from "../Events/dialogue";
 import { testConversation } from "../Dialogue/testConversation";
 import { npcChangeMap } from "../Events/npcChangeMap";
-
 import { GameObject, GameObjectConfig } from "../../_Squeleto/GameObject";
 import { Sprite } from "../../_Squeleto/Sprite";
 import { StoryFlagManager } from "../../_Squeleto/StoryFlagManager";

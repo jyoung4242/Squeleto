@@ -1,5 +1,4 @@
 import { v4 as uuidv4 } from "uuid";
-import { EventManager } from "./EventManager";
 import { GameObject } from "./GameObject";
 
 export type collisionBody = {
@@ -7,6 +6,8 @@ export type collisionBody = {
   y: number;
   w: number;
   h: number;
+  displayw: number;
+  displayh: number;
   actions?: any[];
   color?: string;
 };
@@ -94,8 +95,10 @@ export class GameMap {
     return { width: this.width, height: this.height };
   };
 
-  static create(config: MapConfig) {
-    return new GameMap(config);
+  static create(config: MapConfig): Promise<GameMap> {
+    return new Promise(resolve => {
+      return new GameMap(config);
+    });
   }
 
   triggerCutscene(who: GameObject, Actions: Array<any>) {}

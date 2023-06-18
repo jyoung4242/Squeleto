@@ -68,6 +68,8 @@ export class GameObject {
         h: config.collisionBody.height,
         x: config.collisionBody.offsetX,
         y: config.collisionBody.offsetY,
+        displayh: config.collisionBody.height - 2,
+        displayw: config.collisionBody.width - 2,
         color: config.collisionBody.color,
       });
     }
