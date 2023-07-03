@@ -68,13 +68,15 @@ export async function setupDemo2() {
       "@peasy-lib/peasy-states": "latest",
       "@peasy-lib/peasy-engine": "latest",
       "howler": "latest",
-      "uuid": "latest"
+      "uuid": "latest",
+      "pako": "latest",
 
     },
     "devDependencies": {
       "json": "latest",
       "typescript": "latest",
-      "vite": "latest"
+      "vite": "latest",
+      
     }
   }`,
     {},
