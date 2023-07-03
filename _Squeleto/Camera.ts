@@ -22,6 +22,10 @@ export class Camera {
   static vpW: number;
   static vpH: number;
   static isFlashEnabled = false;
+  static lockX: Boolean = false;
+  static lockY: Boolean = false;
+  static lockXval: number = 0;
+  static lockYval: number = 0;
 
   static initialize(w: number, h: number) {
     Camera.vpW = w;
@@ -47,8 +51,26 @@ export class Camera {
       Camera.isFlashEnabled = false;
     }, duration);
   }
+  static follow(
+    who: GameObject,
+    options?: {
+      lockX?: boolean;
+      lockY?: boolean;
+      lockXval?: number;
+      lockYval?: number;
+    }
+  ) {
+    if (options) {
+      if (options.lockX) {
+        Camera.lockX = options.lockX;
+        options.lockXval ? (Camera.lockXval = options.lockXval) : (Camera.lockXval = 0);
+      }
+      if (options.lockY) {
+        Camera.lockY = options.lockY;
+        options.lockYval ? (Camera.lockYval = options.lockYval) : (Camera.lockYval = 0);
+      }
+    }
 
-  static follow(who: GameObject) {
     Camera.followedObject = who;
   }
 
@@ -88,12 +110,17 @@ export class Camera {
 
   static update(deltaTime: number, now: number) {
     if (Camera.followedObject) {
-      let followPosition_viewportX = Camera.vpW / 2 - Camera.followedObject?.width / 2;
-      let followPosition_viewportY = Camera.vpH / 2 - Camera.followedObject?.height / 2;
+      let followPosition_viewportX, followPosition_viewportY;
+      if (Camera.lockX) followPosition_viewportX = Camera.lockXval;
+      else followPosition_viewportX = followPosition_viewportX = Camera.vpW / 2 - Camera.followedObject?.width / 2;
+      if (Camera.lockY) followPosition_viewportY = Camera.lockYval;
+      else followPosition_viewportY = Camera.vpH / 2 - Camera.followedObject?.height / 2;
       let { shakeX, shakeY } = this.shakeUpdate(deltaTime);
 
-      Camera.xPos = followPosition_viewportX - Camera.followedObject?.xPos + shakeX;
-      Camera.yPos = followPosition_viewportY - Camera.followedObject?.yPos + shakeY;
+      if (!Camera.lockX) Camera.xPos = followPosition_viewportX - Camera.followedObject?.xPos + shakeX;
+      else Camera.xPos = followPosition_viewportX + shakeX;
+      if (!Camera.lockY) Camera.yPos = followPosition_viewportY - Camera.followedObject?.yPos + shakeY;
+      else Camera.yPos = followPosition_viewportY + shakeY;
     }
   }
 }

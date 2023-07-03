@@ -4,7 +4,8 @@ export class Sprite {
   zIndex: number;
   src: string;
   animationBinding: string = "0px 0px";
-  constructor(src: string) {
+  hFlip = 1;
+  constructor(src: string, flip?: number) {
     let img = new Image();
     img.onload = () => {
       img.width;
@@ -12,6 +13,7 @@ export class Sprite {
       this.height = img.height;
     };
     img.src = src;
+    flip ? (this.hFlip = flip) : (this.hFlip = 1);
     this.zIndex = 2;
     this.src = src;
   }

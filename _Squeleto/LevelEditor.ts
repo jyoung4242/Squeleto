@@ -33,8 +33,8 @@ export class Tile {
     this.asset = config.src;
     this.w = config.tileWidth;
     this.h = config.tileHeight;
-    typeof config.offsetX == "number" ? (this.x = config.offsetX) : (this.x = null);
-    typeof config.offsetY == "number" ? (this.y = config.offsetY) : (this.y = null);
+    config.offsetX ? (this.x = config.offsetX) : (this.x = null);
+    config.offsetY ? (this.y = config.offsetY) : (this.y = null);
   }
 }
 
@@ -80,7 +80,6 @@ export class TileMap {
   }
 
   async initialize(): Promise<void> {
-    console.log("init");
     //setup virtual canvas
     const virtualCanvas = new OffscreenCanvas(this.tilesize * this.numColumns, this.tilesize * this.numRows);
     const vCtx = virtualCanvas.getContext("2d");
@@ -99,31 +98,25 @@ export class TileMap {
     }
 
     //start parsing template and drawing tile at designated location
-
     this.template.forEach((row, rowIndex) => {
       const parsedChars = [...row];
-
       parsedChars.forEach((char, colIndex) => {
         if (char == " ") return;
 
         const nextTile = this.mappedTiles.get(char);
-        const tileLocation = tileLocations[`${colIndex}-${rowIndex}`];
-        console.log(nextTile);
 
+        const tileLocation = tileLocations[`${colIndex}-${rowIndex}`];
         if (nextTile?.wall) {
           this.walls.push({
             w: nextTile.tile.w,
             h: nextTile.tile.h,
             x: tileLocation.x,
             y: tileLocation.y,
-            displayh: nextTile.tile.h - 2,
-            displayw: nextTile.tile.w - 2,
             color: "red",
           });
         }
-
-        if (nextTile && nextTile.tile.x != null && nextTile.tile.y != null) {
-          if (vCtx) {
+        if (nextTile && (nextTile.tile.x == null || nextTile.tile.y == null)) {
+          if (vCtx)
             vCtx.drawImage(
               nextTile.tile.asset as HTMLImageElement,
               nextTile.tile.x as number,
@@ -135,7 +128,6 @@ export class TileMap {
               nextTile.tile.w,
               nextTile.tile.h
             );
-          }
         } else if (nextTile && vCtx) {
           vCtx.drawImage(nextTile.tile.asset as HTMLImageElement, tileLocation.x, tileLocation.y);
         }

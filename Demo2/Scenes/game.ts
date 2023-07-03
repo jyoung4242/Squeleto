@@ -104,7 +104,7 @@ export class Game extends Scene {
     // Set Camera
     // this tells the camera to follow the player object, but...
     // it locks the y axis so it only follows the x axis of the player
-    this.renderer.cameraFollow("Player", { lockY: true, lockValY: 50 });
+    this.renderer.cameraFollow("Player", { lockY: true, lockYval: 45 });
 
     // START your engines!
     // this.renderer.showCollisionBodies(true);  // this is for diagnostics only, shows the collision bodies

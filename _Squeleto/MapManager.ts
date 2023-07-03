@@ -6,8 +6,6 @@ export type collisionBody = {
   y: number;
   w: number;
   h: number;
-  displayw: number;
-  displayh: number;
   actions?: any[];
   color?: string;
 };

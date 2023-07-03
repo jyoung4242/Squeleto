@@ -14,7 +14,7 @@ import { Bullet } from "./Bullet";
 // setting up moving constancts
 const MAX_WALKING_SPEED = 1.5;
 const GRAVITY_SPEED = 0.25;
-const MAX_FALLNG_SPEED = 4;
+const MAX_FALLNG_SPEED = 23;
 
 // all Squeleto game objects extend the GameObject class
 export class Player extends GameObject {

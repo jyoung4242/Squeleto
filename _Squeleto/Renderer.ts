@@ -117,7 +117,7 @@ export class GameRenderer {
                 <camera-flash class="camera-flash" \${===renderState.camera.isFlashEnabled}></camera-flash>
                 <render-object id="\${obj.id}" data-type="\${obj.name}" class="\${obj.class}" style="transform: translate3d(\${obj.xPos}px, \${obj.yPos}px, 0px);z-index: \${obj.zIndex}; width: \${obj.width}px;height: \${obj.height}px;background-image:url('\${obj.src}');" \${obj<=*renderState.renderedObjects:id}>
                   <render-inner style="position: relative;display: block; width: 100%; height: 100%; top:0px; left: 0px">
-                    <sprite-layer class="object_sprite" \${sl<=*obj.spriteLayers} style="z-index: \${sl.zIndex}; width: \${sl.width}px;height: \${sl.height}px;background-image:url('\${sl.src}');background-position: \${sl.animationBinding};"></sprite-layer>
+                    <sprite-layer class="object_sprite" \${sl<=*obj.spriteLayers} style="z-index: \${sl.zIndex}; width: \${sl.width}px;height: \${sl.height}px;background-image:url('\${sl.src}');background-position: \${sl.animationBinding}; transform: scaleX(\${sl.hFlip});"></sprite-layer>
                     <collision-layers \${===obj.isCollisionLayersVisible}>
                       <border-box class="border-box"  \${cl<=*obj.collisionLayers}  style="z-index: 9999;border: 1px solid \${cl.color}; top: \${cl.y}px; left:\${cl.x}px; width: \${cl.w}px; height: \${cl.h}px;"></border-box>
                       <trigger-box class="border-box"  \${tl<=*obj.triggerLayers} style="z-index: 9999;border: 1px solid \${tl.color}; top: \${tl.y}px; left:\${tl.x}px; width: \${tl.w}px; height: \${tl.h}px;"></trigger-box>
@@ -169,7 +169,10 @@ export class GameRenderer {
     });
   }
 
-  static destroyObject(id: string) {}
+  static destroyObject(id: string) {
+    const delIndex = GameRenderer.state.gameObjects.objects.findIndex(o => o.id == id);
+    GameRenderer.state.gameObjects.objects.splice(delIndex, 1);
+  }
 
   //#endregion
 
@@ -182,10 +185,7 @@ export class GameRenderer {
     });
   }
 
-  static destroyMap(id: string) {}
-
   static async changeMap(name: string) {
-    //console.log("in mapchange");
     GameRenderer.cameraFlash(750);
     await wait(75);
     GameRenderer.state.maps.currentMap = name;
@@ -271,10 +271,21 @@ export class GameRenderer {
   //#endregion
 
   //#region Camera
-  static cameraFollow(who: string) {
+  static cameraFollow(
+    who: string,
+    lock?: {
+      lockX?: boolean;
+      lockY?: boolean;
+      lockXval?: number;
+      lockYval?: number;
+    }
+  ) {
     //find GameObject with name
     const goIndex = RenderState.gameObjects.objects.findIndex(go => go.name == who);
-    if (goIndex != -1) RenderState.camera.follow(RenderState.gameObjects.objects[goIndex]);
+    if (goIndex != -1) {
+      if (lock) RenderState.camera.follow(RenderState.gameObjects.objects[goIndex], lock);
+      else RenderState.camera.follow(RenderState.gameObjects.objects[goIndex]);
+    }
   }
 
   static cameraFlash(duration: number) {

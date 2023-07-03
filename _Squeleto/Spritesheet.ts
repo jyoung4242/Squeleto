@@ -9,6 +9,7 @@ export class Spritesheet {
   cols: number = 0;
   frames: any = {};
   zIndex = 0;
+  hFlip = 1;
   constructor(src: string, numframes: number, rows: number, cols: number, frameW: number, frameH: number) {
     this.src = src;
     this.numFrames = numframes;
@@ -49,7 +50,7 @@ export class AnimationSequence {
   src: Spritesheet | undefined = undefined;
   isRunning: boolean = false;
   currentSequence = "default";
-  currentFrame = 0;
+  currentFrame: number | { index: number; flip: boolean } = 0;
   currentIndex = 0;
   intervalHandler: number = 0;
   callback: Function;
@@ -104,9 +105,18 @@ export class AnimationSequence {
 
   getFrameDetails(): string {
     //get frame details from spritesheet
-    let { xPos, yPos } = this.src?.frames[this.currentFrame];
-    //update binding
-    return `${xPos}px ${yPos}px`;
+
+    if (typeof this.currentFrame == "object" && this.src) {
+      let { xPos, yPos } = this.src?.frames[this.currentFrame.index];
+      this.currentFrame.flip == true ? (this.src.hFlip = -1) : (this.src.hFlip = 1);
+      //update binding
+      return `${xPos}px ${yPos}px`;
+    } else {
+      let { xPos, yPos } = this.src?.frames[this.currentFrame as number];
+      if (this.src) this.src.hFlip = 1;
+      //update binding
+      return `${xPos}px ${yPos}px`;
+    }
   }
 
   tick = () => {
