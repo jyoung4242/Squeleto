@@ -1,3 +1,8 @@
+/*
+DEFAULT LOGIN SCREEN FOR DEMO
+applies a anchor tag in middle to start the game scene
+*/
+
 import { Scene } from "../../_Squeleto/SceneManager";
 
 export class Login extends Scene {
