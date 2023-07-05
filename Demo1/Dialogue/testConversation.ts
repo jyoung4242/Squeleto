@@ -1,7 +1,17 @@
 import { Conversation, DialogSnapshot } from "../PlugIns/DialogueManager";
-import hero from "../Assets/heroAvatar.png";
+import hero from "../../src/Assets/heroAvatar.png";
 import npc from "../Assets/npcAvatar.png";
-import { GameObject } from "../../src/components/GameObject";
+import { GameObject } from "../../_Squeleto/GameObject";
+
+/**
+ * This is a content component of the custom plug in DialogManager that was created
+ * More complex popup that's tied to several SF settings, depending on choices made
+ * StoryFlag prereqs set a flag if you've checked the bookcase once, then the message changes
+ * Mulitple messages, and some have back and forth dialog
+ * 2nd conversation after the not nice greeting demonstrates options, and SF's are set
+ * based on selection, which then branches off the different diaglog trees
+ * Also demonstrates the use of different layouts with avatars as well...
+ */
 
 const snapshot1: DialogSnapshot = {
   conditions: {

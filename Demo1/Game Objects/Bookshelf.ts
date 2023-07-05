@@ -5,6 +5,13 @@ import { DialogManager } from "../PlugIns/DialogueManager";
 import { bookcasePopup } from "../Dialogue/bookcasepopup";
 import { DialogEvent } from "../Events/dialogue";
 
+/**
+ * Bookshelf GameObject
+ * static Sprite is used
+ * uses StoryFlags and the Dialogue Plug-in
+ * 2 Interaction events depending on SF
+ */
+
 export class Bookshelf extends GameObject {
   dm;
   constructor(assets: any, StoryFlags: StoryFlagManager, dm: DialogManager) {
@@ -28,8 +35,14 @@ export class Bookshelf extends GameObject {
     this.dm = dm;
     this.SM = StoryFlags;
     this.interactionEvents = [
-      { conditions: { metBookcase: false }, content: [new DialogEvent(new bookcasePopup(this), this.dm, this.SM)] },
-      { conditions: { metBookcase: true }, content: [new DialogEvent(new bookcasePopup(this), this.dm, this.SM)] },
+      {
+        conditions: { metBookcase: false },
+        content: [new DialogEvent(new bookcasePopup(this), this.dm, "Bookshelf", this.SM)],
+      },
+      {
+        conditions: { metBookcase: true },
+        content: [new DialogEvent(new bookcasePopup(this), this.dm, "Bookshelf", this.SM)],
+      },
     ];
   }
 

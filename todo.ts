@@ -3,4 +3,6 @@
 //TODO - particle system
 //TODO - lighting
 //TODO - phsyics
-//TODO - add sound to Demo 1
+//TODO - camera lerp
+//TODO - localization
+//TODO - accessibility

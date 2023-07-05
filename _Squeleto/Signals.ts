@@ -1,7 +1,11 @@
+import { GameObject } from "./GameObject";
+
 export class Signal {
+  controller: AbortController | undefined | null;
   signalName: string;
-  sender: string;
-  constructor(name: string, from?: string) {
+  sender: string | GameObject;
+  callback: Function | undefined;
+  constructor(name: string, from?: string | GameObject) {
     this.signalName = name;
     from ? (this.sender = from) : (this.sender = "");
   }
@@ -13,12 +17,24 @@ export class Signal {
     } else {
       event = new CustomEvent(this.signalName, { detail: { who: this.sender } });
     }
+
     document.dispatchEvent(event);
   }
 
   listen(callback: Function) {
-    document.addEventListener(this.signalName as keyof DocumentEventMap, e => {
-      callback(e);
-    });
+    this.callback = callback;
+    this.controller = new AbortController();
+    document.addEventListener(
+      this.signalName as keyof DocumentEventMap,
+      (e: CustomEventInit) => {
+        if (this.callback) this.callback(e);
+      },
+      { signal: this.controller.signal }
+    );
+  }
+
+  stopListening() {
+    if (this.controller) this.controller.abort();
+    this.controller = null;
   }
 }

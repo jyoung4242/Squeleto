@@ -1,27 +1,40 @@
+// Import all your Squeleto Modules
 import { Scene } from "../../_Squeleto/SceneManager";
 import { GameRenderer, RenderState, RendererConfig } from "../../_Squeleto/Renderer";
 import { Assets } from "@peasy-lib/peasy-assets";
+import { StoryFlagManager } from "../../_Squeleto/StoryFlagManager";
+import { Chiptune } from "../../_Squeleto/Chiptune";
+
+// Next import your specific game content (Objects, Maps,etc...)
 import { Kitchen } from "../Maps/kitchen";
+import { OutsideMap } from "../Maps/outside";
+
 import { Player } from "../Game Objects/Player";
 import { Counter } from "../Game Objects/Counter";
 import { Bookshelf } from "../Game Objects/Bookshelf";
 import { NPC1 } from "../Game Objects/npc1";
-import { OutsideMap } from "../Maps/outside";
-import { StoryFlagManager } from "../../_Squeleto/StoryFlagManager";
-import { DialogManager } from "../PlugIns/DialogueManager";
 import { Planter } from "../Game Objects/planter";
 import { PizzaThingy } from "../Game Objects/pizzathingy";
 
+// Finally Import your custom plug-ins
+import { DialogManager } from "../PlugIns/DialogueManager";
+
+// All Squeleto Scenes are an extension of the Scene Class
 export class Game extends Scene {
+  // The one thing that separates a normal scene from a game
+  // scene is using the Squeleto renderer
+  // The brings in your camera, ECS, and gameloop
   renderer = GameRenderer;
+  renderState = RenderState;
 
   //****************************************** */
-  //dm name here is critical for peasy bindings
-  //when using plugins, be very careful how you access them
+  // dm name here is critical for peasy bindings, cause they have to match what's in the plugin
+  // when using plugins, be very careful how you access them
   //****************************************** */
   dm = new DialogManager();
 
-  renderState = RenderState;
+  // StoryFlag system uses a default set of conditions that gets passed around
+  // If larger, this can be brought in from its own module
   storyFlags = {
     someCondition: false,
     metBookcase: false,
@@ -29,19 +42,25 @@ export class Game extends Scene {
     meek: false,
     deaf: false,
     angry: false,
+    bathroom: false,
   };
   sm = new StoryFlagManager(this.storyFlags);
 
-  /**
-   * plug-ins are inserted after the renderer
-   */
+  /****************************************************
+   * plug-ins are inserted after the renderer to ensure
+   * they render on top of the game
+   ****************************************************/
   public template = `<scene-layer class="scene" style="width: 100%; height: 100%; position: absolute; top: 0; left:0; color: white;">
     ${this.renderer.template}
     ${this.dm.template}
   </scene-layer>`;
 
+  bgm: Chiptune | undefined | null;
+
   public async init() {
-    //Loading Assets
+    // **************************************
+    // Loading Assets
+    // **************************************
     Assets.initialize({ src: "../src/Assets/" });
     await Assets.load([
       "lower.png",
@@ -55,9 +74,14 @@ export class Game extends Scene {
       "outsidemod.png",
       "planter.png",
       "pizzazone.png",
+      "step.wav",
+      "error.wav",
+      "door.mp3",
     ]);
 
-    //Initialize Renderer
+    // **************************************
+    // Initialize Renderer
+    // **************************************
     const renderConfig: RendererConfig = {
       state: this.renderState,
       storyFlags: this.sm,
@@ -68,11 +92,15 @@ export class Game extends Scene {
     };
     this.renderer.initialize(renderConfig);
 
-    //Load Maps
-    this.renderer.createMap([new Kitchen(Assets), new OutsideMap(Assets)]);
+    // **************************************
+    // Load Maps
+    // **************************************
+    this.renderer.createMap([new Kitchen(Assets, this.dm, this.storyFlags), new OutsideMap(Assets)]);
     this.renderer.changeMap("kitchen");
 
-    //Load Objects
+    // **************************************
+    // Load Objects
+    // **************************************
     let objConfig = [
       new Player(Assets, this.sm, this.dm),
       new Counter(Assets, this.sm),
@@ -83,11 +111,18 @@ export class Game extends Scene {
     ];
     this.renderer.createObject(objConfig);
 
-    //Set Camera
+    // **************************************
+    // Set Camera
+    // **************************************
     this.renderer.cameraFollow("Player");
 
-    //START your engines!
-    //this.renderer.showCollisionBodies(true);
+    // Turn on BGM
+    this.bgm = new Chiptune("0x090100700135583f70");
+
+    // **************************************
+    // START your engines!
+    // this.renderer.showCollisionBodies(true);
+    // **************************************
     this.renderer.engineStart();
   }
   public exit() {}

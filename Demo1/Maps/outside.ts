@@ -1,5 +1,19 @@
 import { GameMap, MapConfig } from "../../_Squeleto/MapManager";
 import { ChangeMap } from "../../_Squeleto/Renderer";
+import { StandEvent } from "../Events/stand";
+
+/**************************************
+ * Outside Map
+ * ---------------------------------
+ *
+ * passes two layers of images from Scene
+ *
+ * 2 significant parameters in constructor is
+ * walls[] and triggers []
+ * bunch of boundary walls
+ * ONE triggers:
+ * the top door, that changes the map back to kitchen
+ *************************************/
 
 export class OutsideMap extends GameMap {
   constructor(assets: any) {
@@ -80,7 +94,7 @@ export class OutsideMap extends GameMap {
           w: 16,
           h: 5,
           color: "yellow",
-          actions: [new ChangeMap("kitchen", 32, 64)],
+          actions: [new ChangeMap("kitchen", 32, 64), new StandEvent("down", 100)],
         },
       ],
     };

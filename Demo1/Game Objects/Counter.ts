@@ -2,6 +2,13 @@ import { GameObject, GameObjectConfig } from "../../_Squeleto/GameObject";
 import { Sprite } from "../../_Squeleto/Sprite";
 import { StoryFlagManager } from "../../_Squeleto/StoryFlagManager";
 
+/**
+ * Counter GameObject
+ * static Sprite is used
+ * no SF or interactions
+ * just an object to walk around
+ */
+
 export class Counter extends GameObject {
   constructor(assets: any, StoryFlags: StoryFlagManager) {
     let config: GameObjectConfig = {

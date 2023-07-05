@@ -1,6 +1,13 @@
 import { GameEvent } from "../../_Squeleto/EventManager";
 import { GameObject } from "../../_Squeleto/GameObject";
 
+/**
+ * This is a event for the asynchronous changing of the maps
+ * for npc's, which is different than the default mapchange
+ * which changes the rendered map, this allows NPC's to leave
+ * one map and move to another, but doesn't touch what's rendered
+ */
+
 export class npcChangeMap extends GameEvent {
   who: GameObject | undefined;
   newMap: string;
@@ -21,6 +28,7 @@ export class npcChangeMap extends GameEvent {
       this.who.currentMap = this.newMap;
       this.who.xPos = this.newX;
       this.who.yPos = this.newY;
+
       resolve();
     });
   }

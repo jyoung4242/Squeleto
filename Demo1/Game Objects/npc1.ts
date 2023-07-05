@@ -1,30 +1,60 @@
+// First Import all your Squeleto Modules
 import { AnimationSequence, Spritesheet } from "../../_Squeleto/Spritesheet";
-import { WalkEvent } from "../Events/walk";
 import { EventManager } from "../../_Squeleto/EventManager";
 import { CollisionManager, direction } from "../../_Squeleto/CollisionManager";
 import { GameMap } from "../../_Squeleto/MapManager";
 import { State, States } from "@peasy-lib/peasy-states";
-import { DialogEvent } from "../Events/dialogue";
-import { testConversation } from "../Dialogue/testConversation";
-import { npcChangeMap } from "../Events/npcChangeMap";
 import { GameObject, GameObjectConfig } from "../../_Squeleto/GameObject";
 import { Sprite } from "../../_Squeleto/Sprite";
 import { StoryFlagManager } from "../../_Squeleto/StoryFlagManager";
+import { Signal } from "../../_Squeleto/Signals";
+import { SFX } from "../../_Squeleto/Sound API";
 
+// Then import your content modules
+import { playSFX } from "../Events/sfx";
+import { WalkEvent } from "../Events/walk";
+import { DialogEvent } from "../Events/dialogue";
+import { testConversation } from "../Dialogue/testConversation";
+import { npcChangeMap } from "../Events/npcChangeMap";
+
+// NPC Constants
 const NPC_WALKSPEED = 1;
 
+/**************************************
+ * NPC GameObject
+ * ---------------------------------
+ *
+ * Uses spritesheet and a shadow sprite
+ * Uses an animation handler for manage spritesheet
+ * Uses peasy-states for animation states
+ *
+ * This object uses the inputHandler
+ * Keyboard AND Gamepad available
+ *
+ * Registers SFX for the player, door sound
+ *
+ * Uses Signals module for walking and standing events
+ *
+ * Uses Event Manager for behavior loop
+ * which is the IDLE list of events that occur
+ *
+ *************************************/
+
 export class NPC1 extends GameObject {
+  // systems properties
   dm;
-  isCutscenePlaying = false;
-  isStanding = false;
+  animationHandler;
   collisions = new CollisionManager();
   behaviorLoop;
-  direction: direction;
+  walkingstates = new WalkingStates();
+
+  // general purpose properties
   xVelocity = 0;
   yVelocity = 0;
-  isMoving = false;
+  direction: direction;
   distanceRemaining = 0;
-  animationHandler;
+
+  // Animation sequence
   demosequence = {
     "walk-up": [8, 9, 10, 11],
     "walk-down": [0, 1, 2, 3],
@@ -35,9 +65,18 @@ export class NPC1 extends GameObject {
     "idle-left": [12],
     "idle-right": [4],
   };
-  walkingstates = new WalkingStates();
+
+  // Signals
+  signalStandDone: Signal;
+  signalWalkingDone: Signal;
+
+  // Flags
+  isCutscenePlaying = false;
+  isStanding = false;
+  isMoving = false;
 
   constructor(assets: any, StoryFlags: StoryFlagManager, dm: any) {
+    //Spritesheets must be initialized prior to passing super function
     let npcSpritesheet = new Spritesheet(assets.image("npc2").src, 16, 4, 4, 32, 32);
     npcSpritesheet.initialize();
 
@@ -58,8 +97,29 @@ export class NPC1 extends GameObject {
       },
     };
     super(config);
-    this.SM = StoryFlags;
-    this.dm = dm;
+
+    // Sound Effect Registration
+    SFX.register({ name: "door", src: assets.audio("door").src });
+
+    // Registering Signals
+    this.signalStandDone = new Signal("standCompleted", this.id);
+    this.signalWalkingDone = new Signal("walkCompleted", this.id);
+
+    // Initialization of Systems
+    this.SM = StoryFlags; // Story Flag Management
+    this.dm = dm; // Dialog Manager passed from Scene
+
+    // passing the spritesheet and animation sequence to the Animation Handler, providing update callback and framerate
+    this.animationHandler = new AnimationSequence(npcSpritesheet, this.animationUpdate, this.demosequence, 150);
+    this.animationHandler.changeSequence("idle-down");
+
+    // setting up state machine for managing Animations
+    this.walkingstates.register(isWalking, isIdle);
+    this.walkingstates.set(isIdle, performance.now(), "down", "idle-down", this);
+    this.direction = "down";
+
+    // Building list of Events that are used when player interacts with NPC
+    // uses StoryFlags to pick event path
     this.interactionEvents = [
       {
         conditions: {
@@ -68,7 +128,7 @@ export class NPC1 extends GameObject {
           deaf: false,
           angry: false,
         },
-        content: [new DialogEvent(new testConversation(this), this.dm, this.SM.StoryFlags)],
+        content: [new DialogEvent(new testConversation(this), this.dm, "npc1", this.SM.StoryFlags)],
       },
       {
         conditions: {
@@ -77,7 +137,7 @@ export class NPC1 extends GameObject {
           deaf: false,
           angry: false,
         },
-        content: [new DialogEvent(new testConversation(this), this.dm, this.SM.StoryFlags)],
+        content: [new DialogEvent(new testConversation(this), this.dm, "npc1", this.SM.StoryFlags)],
       },
       {
         conditions: {
@@ -86,7 +146,7 @@ export class NPC1 extends GameObject {
           deaf: false,
           angry: false,
         },
-        content: [new DialogEvent(new testConversation(this), this.dm, this.SM.StoryFlags)],
+        content: [new DialogEvent(new testConversation(this), this.dm, "npc1", this.SM.StoryFlags)],
       },
       {
         conditions: {
@@ -95,7 +155,7 @@ export class NPC1 extends GameObject {
           deaf: true,
           angry: false,
         },
-        content: [new DialogEvent(new testConversation(this), this.dm, this.SM.StoryFlags)],
+        content: [new DialogEvent(new testConversation(this), this.dm, "npc1", this.SM.StoryFlags)],
       },
       {
         conditions: {
@@ -104,31 +164,36 @@ export class NPC1 extends GameObject {
           deaf: false,
           angry: true,
         },
-        content: [new DialogEvent(new testConversation(this), this.dm, this.SM.StoryFlags)],
+        content: [new DialogEvent(new testConversation(this), this.dm, "npc1", this.SM.StoryFlags)],
       },
       {
         conditions: "default",
-        content: [new DialogEvent(new testConversation(this), this.dm, this.SM.StoryFlags)],
+        content: [new DialogEvent(new testConversation(this), this.dm, "npc1", this.SM.StoryFlags)],
       },
     ];
-    this.behaviorLoop = new EventManager(this, "LOOP");
-    this.animationHandler = new AnimationSequence(npcSpritesheet, this.animationUpdate, this.demosequence, 150);
-    this.animationHandler.changeSequence("idle-down");
-    this.walkingstates.register(isWalking, isIdle);
-    this.walkingstates.set(isIdle, performance.now(), "down", "idle-down", this);
 
-    this.direction = "down";
+    // registering EventManager for Behavior Loop
+    // Building list of Events that are used for Idle behavior
+    this.behaviorLoop = new EventManager(this, "LOOP");
     this.behaviorLoop.loadSequence([
       new WalkEvent("down", 60),
+      new playSFX("door"),
       new npcChangeMap("outside", 105, 75),
       new WalkEvent("down", 10),
       new WalkEvent("up", 10),
+      new playSFX("door"),
       new npcChangeMap("kitchen", 70, 150),
       new WalkEvent("up", 60),
     ]);
-    this.behaviorLoop.start();
+    this.behaviorLoop.start(); // starts the BL
   }
 
+  /***********************************
+   * this is the event interface for
+   * walk and stand events
+   * when these events are locally completed
+   * they send Signals to the Events to resolve
+   * ******************************* */
   startBehavior(behavior: string, ...params: any) {
     this.direction = params[0];
     this.walkingstates.set(isWalking, performance.now(), this.direction, `walk-${this.direction}`, this);
@@ -161,16 +226,23 @@ export class NPC1 extends GameObject {
       this.isMoving = false;
 
       setTimeout(() => {
-        const event = new CustomEvent("standCompleted", { detail: this });
-        document.dispatchEvent(event);
+        this.signalStandDone.send();
       }, duration);
     }
   }
 
+  /***********************************
+   * update callback for the
+   * animation handler
+   * ******************************* */
   animationUpdate = () => {
     this.spriteLayers[1].animationBinding = this.animationHandler.getFrameDetails();
   };
 
+  /***********************************
+   * peasy-engine renderer and physics
+   * gameloop callbacks for each entity
+   * ******************************* */
   update(deltaTime: number, objects: GameObject[], currentMap: GameMap): boolean {
     return true;
   }
@@ -182,7 +254,8 @@ export class NPC1 extends GameObject {
     if (!currentMap) return true;
     if (this.isCutscenePlaying) return true;
     //if (currentMap.name != this.currentMap) return true;
-    let otherObjects = objects.filter(oo => this.id != oo.id);
+
+    let otherObjects = objects.filter(oo => this.id != oo.id && oo.currentMap == this.currentMap);
     this.collisionDirections = [];
 
     /***********************************
@@ -191,10 +264,14 @@ export class NPC1 extends GameObject {
     otherObjects.forEach(o => {
       o.collisionLayers.forEach(cl => {
         let colResult = this.collisions.isObjectColliding({ w: cl.w, h: cl.h, x: cl.x + o.xPos, y: cl.y + o.yPos }, this);
+
         this.isColliding = colResult.status;
         this.collisionDirections.push(...colResult.collisionDirection);
       });
     });
+
+    // this logic changes player direction and moves based on
+    // direction
 
     if (this.isMoving) {
       if (this.isMoving) {
@@ -218,25 +295,37 @@ export class NPC1 extends GameObject {
         }
       }
 
+      /**
+       * Resolution of walking event
+       * if distance dictated is covered
+       * send Signal to event
+       */
       this.distanceRemaining--;
       if (this.distanceRemaining <= 0) {
         this.distanceRemaining = 0;
         this.isMoving = false;
         this.xVelocity = 0;
         this.yVelocity = 0;
-
-        const event = new CustomEvent("walkCompleted", { detail: this });
-        document.dispatchEvent(event);
+        this.signalWalkingDone.send();
       }
     }
     return true;
   };
 
+  /***********************************
+   * this is the utility function that
+   * parses the collision array for
+   * directionaly collision
+   * ******************************* */
   isDirectionInArray(dir: string): boolean {
     return this.collisionDirections.find(d => d == dir) != undefined;
   }
 }
 
+/***********************************
+ * animation states for managing differet
+ * animation sequences, uses peasy-states
+ * ******************************* */
 class WalkingStates extends States {}
 class isWalking extends State {
   enter(_previous: State | null, ...params: any): void | Promise<void> {
@@ -259,4 +348,3 @@ class isIdle extends State {
   }
   exit() {}
 }
-//new CameraFlash(this, 250),

@@ -12,6 +12,9 @@
  ************************************************************/
 import { UI } from "@peasy-lib/peasy-ui";
 import { GameObject } from "../../_Squeleto/GameObject";
+import { Signal } from "../../_Squeleto/Signals";
+import { collisionBody } from "../../_Squeleto/MapManager";
+import { Game } from "../Scenes/game";
 
 //**************************************** */
 // type for defining choices in the dialog
@@ -172,11 +175,14 @@ export class DialogManager {
 
 `;
 
-  who: GameObject | undefined;
+  who: GameObject | string;
   dlgIndex = 0;
   isConfigured = false;
   activeNarrative: Conversation | undefined;
   dialogType: "left" | "right" | "none" | "both" | "right_interact" | "left_interact" = "left";
+
+  //dialog Signal
+  dialogSignal: Signal;
 
   //storyflag state
   storyFlagstoClear: any;
@@ -207,14 +213,20 @@ export class DialogManager {
   isSubmitEnabled = true;
   isDialogActive = false;
 
-  constructor() {}
+  constructor() {
+    this.who = "";
+    this.dialogSignal = new Signal("");
+  }
 
   //********************************** */
   //Loading conversation data
   //********************************** */
   configureNarrative(narration: Conversation) {
     this.activeNarrative = narration;
-    this.who = narration.who;
+    if (typeof narration.who == "string" || typeof narration.who == "object") this.who = narration.who;
+    console.log("in dialogman, ", this.who);
+
+    if (this.who) this.dialogSignal = new Signal("dialogueComplete", this.who);
     this.isConfigured = true;
     this.portraitRight;
   }
@@ -233,9 +245,9 @@ export class DialogManager {
   //provides reference to Scene's storyflags
   //WILL mutate them
   //********************************** */
-  configureStoryFlags(sf: any) {
+  configureStoryFlags = (sf: any) => {
     this.storyFlags = sf;
-  }
+  };
 
   //********************************** */
   //main routine for manipulating DOM
@@ -338,8 +350,9 @@ export class DialogManager {
         this.isConfigured = false;
         this.isDialogActive = false;
 
-        const event = new CustomEvent("dialogComplete", { detail: this.who });
-        document.dispatchEvent(event);
+        console.log("sending signal", this.dialogSignal);
+
+        this.dialogSignal.send([this.who]);
       }
     });
   };
@@ -349,7 +362,7 @@ export class DialogManager {
   // returns the content info based on matching
   // conditions
   //******************************************* */
-  getContent() {
+  getContent = () => {
     //loop through keys and find first match
     if (this.activeNarrative) {
       for (const [key, entry] of Object.entries(this.activeNarrative.messageSnapshots)) {
@@ -368,7 +381,7 @@ export class DialogManager {
         }
       }
     }
-  }
+  };
 
   //******************************************* */
   // based on index passed, displays the
@@ -511,8 +524,6 @@ export class DialogManager {
   }
 
   speedup() {
-    console.log(this.letterIndex, this.dialogPendingContent.length);
-
     if (this.letterIndex == this.dialogPendingContent.length) {
       this.runNext();
     } else {
@@ -521,7 +532,7 @@ export class DialogManager {
       this.dlgIntervalHandler = setInterval(() => {
         if (this.letterIndex >= this.dialogPendingContent.length + 1) {
           this.clearDmInterval();
-          console.log("resetting index");
+
           this.letterIndex = this.dialogPendingContent.length;
           return;
         }
@@ -548,7 +559,7 @@ export class Conversation {
   backgroundColor: string = "";
   borderColor: string = "";
   messageSnapshots: Array<DialogSnapshot> = [];
-  who: GameObject | undefined;
+  who: GameObject | string | undefined;
 
-  constructor(who: GameObject) {}
+  constructor(who?: GameObject | string) {}
 }

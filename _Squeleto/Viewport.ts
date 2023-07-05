@@ -1,4 +1,3 @@
-import { log } from "@clack/prompts";
 import { SceneManager } from "./SceneManager";
 
 export class Viewport {

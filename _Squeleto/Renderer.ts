@@ -60,7 +60,8 @@ export class GameRenderer {
             position: absolute;
             top: 0;
             left:0;
-            
+            image-rendering: pixelated;
+            transition: translate3d 0.1s linear;
         }
         
         camera-layer{
@@ -83,6 +84,7 @@ export class GameRenderer {
             opacity: 1;
             transition: opacity 0.2s;
             z-index: 999999;
+            image-rendering: pixelated;
         }
         camera-flash.pui-adding,
         camera-flash.pui-removing
@@ -90,17 +92,32 @@ export class GameRenderer {
           opacity: 0;
         }
         
-        .map, .gameObject, .object_sprite{
+
+        .map{
+          top:0;
+          left:0;
+          position:absolute;
+          display:block;
+          background-repeat: no-repeat;
+          image-rendering: pixelated;
+        }
+
+        .gameObject{
+          top:0;
+          left:0;
+          position:absolute;
+          display:block;
+          background-repeat: no-repeat;
+          image-rendering: pixelated;
+        }
+
+        .object_sprite{
             top:0;
             left:0;
             position:absolute;
             display:block;
             background-repeat: no-repeat;
-            
-            
-        }
-        .object-sprite{
-          position: absolute;
+            image-rendering: pixelated;
         }
         .border-box{
           position: absolute;
@@ -112,7 +129,7 @@ export class GameRenderer {
         }
         </style>
         
-        <camera-static style="transform: translate(\${renderState.camera.xPos}px,\${renderState.camera.yPos}px); width: \${renderState.camera.cWidth}px; height:\${renderState.camera.cHeight}px; ">
+        <camera-static style="transform: translate3d(\${renderState.camera.xPos}px,\${renderState.camera.yPos}px,0); width: \${renderState.camera.cWidth}px; height:\${renderState.camera.cHeight}px; ">
             <camera-layer style="width: 100%; height: 100%;display: block;">
                 <camera-flash class="camera-flash" \${===renderState.camera.isFlashEnabled}></camera-flash>
                 <render-object id="\${obj.id}" data-type="\${obj.name}" class="\${obj.class}" style="transform: translate3d(\${obj.xPos}px, \${obj.yPos}px, 0px);z-index: \${obj.zIndex}; width: \${obj.width}px;height: \${obj.height}px;background-image:url('\${obj.src}');" \${obj<=*renderState.renderedObjects:id}>

@@ -1,6 +1,7 @@
 import { GameEvent } from "./EventManager";
 import { GameObject } from "./GameObject";
 import { GameRenderer } from "./Renderer";
+import { Signal } from "./Signals";
 
 export type ShakeDirection = "horizontal" | "vertical" | "random";
 
@@ -18,6 +19,7 @@ export class Camera {
   static shakeMagnitude = 0;
   static shakeElapsedTime = 0;
   static shakeIntervalTime = 0;
+  static shakeSignal: Signal;
   static followedObject: GameObject | undefined;
   static vpW: number;
   static vpH: number;
@@ -41,8 +43,8 @@ export class Camera {
     Camera.shakeFrequency = interval;
     Camera.isShaking = true;
 
-    const event = new CustomEvent("cameraShakeComplete", { detail: who });
-    document.dispatchEvent(event);
+    Camera.shakeSignal = new Signal("cameraShakeComplete", who);
+    Camera.shakeSignal.send();
   }
 
   static flash(duration: number) {
@@ -151,6 +153,7 @@ export class CameraShake extends GameEvent {
   magnitude: number;
   who: GameObject | undefined;
   resolution: ((value: void | PromiseLike<void>) => void) | undefined;
+  shakeSignal: Signal;
 
   constructor(direction: ShakeDirection, magnitude: number, duration: number, interval: number) {
     super("camerashake");
@@ -159,11 +162,12 @@ export class CameraShake extends GameEvent {
     this.direction = direction;
     this.interval = interval;
     this.magnitude = magnitude;
+    this.shakeSignal = new Signal("cameraShakeComplete");
   }
 
   init(who: GameObject): Promise<void> {
     return new Promise(resolve => {
-      document.addEventListener("cameraShakeComplete", this.completeHandler);
+      this.shakeSignal.listen(this.completeHandler);
       this.who = who;
       GameRenderer.cameraShake(this.who, this.direction, this.magnitude, this.duration, this.interval);
       resolve();
@@ -172,8 +176,7 @@ export class CameraShake extends GameEvent {
 
   completeHandler = (e: any) => {
     if (e.detail === this.who) {
-      document.removeEventListener("cameraShakeComplete", this.completeHandler);
-      if (this.resolution) this.resolution();
+      if (this.shakeSignal) this.shakeSignal.stopListening();
     }
   };
 }

@@ -74,7 +74,7 @@ export class EventManager {
 
 export class GameEvent {
   public name: string;
-  who: GameObject | undefined;
+  who: GameObject | string | undefined;
   constructor(eventName: string) {
     this.name = eventName;
   }
