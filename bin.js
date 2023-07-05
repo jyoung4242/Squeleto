@@ -25,7 +25,7 @@ const projectType = await p.select({
   options: [
     { value: "new", label: chalk.blueBright("Start New Project"), hint: "Blank Projet" },
     { value: "d1", label: chalk.blueBright("Download Tutorial #1"), hint: "Top Down RPG" },
-    { value: "d2", label: chalk.blueBright("Download Tutorial #2"), hint: "Side View Platgormer" },
+    { value: "d2", label: chalk.blueBright("Download Tutorial #2"), hint: "Side View Platformer" },
   ],
 });
 if (p.isCancel(projectType)) {
