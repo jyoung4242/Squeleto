@@ -9,14 +9,12 @@ import { log } from "@clack/prompts";
 
 export async function create(newProjectData) {
   //setup new file structure
-  //const DIR_NAME = path.dirname(url.fileURLToPath(import.meta.url));
+  const otherDIR_NAME = path.dirname(url.fileURLToPath(import.meta.url));
   const DIR_NAME = process.cwd();
-  console.log("Current Working Directory", DIR_NAME);
   //format project name
   let projectDirName = toCamelCase(newProjectData.gamename);
   //let projectDirPath = newProjectData.cwd + "/" + projectDirName;
-  let projectDirPath = path.join(DIR_NAME, projectDirName);
-  console.log("Created Project Path: ", projectDirPath);
+  let projectDirPath = path.join(DIR_NAME, projectDirName + "/");
   let projectNPMname = toCamelCase(newProjectData.gamename).toLowerCase();
   await checkAndMakeDirectory(projectDirPath);
 
@@ -27,8 +25,8 @@ export async function create(newProjectData) {
   await checkAndMakeDirectory(projectDirPath + "/dist");
   await checkAndMakeDirectory(projectDirPath + "/public");
 
-  //make the library files
-  await fs.cp(DIR_NAME + "\\_Squeleto\\", projectDirPath + "/_Squeleto/", { recursive: true }, err => {
+  //make the library files - \\_Squeleto\\
+  await fs.cp(path.join(otherDIR_NAME, "_Squeleto\\"), projectDirPath + "/_Squeleto/", { recursive: true }, err => {
     if (err) console.log(err.message);
   });
 
@@ -41,27 +39,38 @@ export async function create(newProjectData) {
   await checkAndMakeDirectory(projectDirPath + "/src/PlugIns");
 
   //scenes
-  await fs.cp(DIR_NAME + "\\src\\Scenes", projectDirPath + "/src/Scenes", { recursive: true }, err => {
+  /* console.log(chalk.redBright("*********************************"));
+  console.log(chalk.redBright(DIR_NAME + "src/Scenes"));
+  console.log(chalk.redBright(projectDirPath + "/src/Scenes"));
+  console.log(chalk.redBright(path.join(projectDirPath, "src/Scenes")));
+  console.log(chalk.redBright(path.join(otherDIR_NAME, "src/Scenes")));
+  console.log(chalk.redBright("*********************************")); */
+
+  /*  await fs.cp(DIR_NAME + "\\src\\Scenes", path.join(projectDirPath, "src/Scenes"), { recursive: true }, err => {
+    if (err) console.log(err.message);
+  }); */
+
+  await fs.cp(path.join(otherDIR_NAME, "src/Scenes"), path.join(projectDirPath, "src/Scenes"), { recursive: true }, err => {
     if (err) console.log(err.message);
   });
 
-  //main.ts
-  await fs.cp(DIR_NAME + "\\src\\main.ts", projectDirPath + "/src/main.ts", {}, err => {
+  //main.ts src\\main.ts
+  await fs.cp(path.join(otherDIR_NAME, "src/main.ts"), path.join(projectDirPath + "src/main.ts"), {}, err => {
     if (err) console.log(err.message);
   });
 
-  //style.css
-  await fs.cp(DIR_NAME + "\\src\\style.css", projectDirPath + "/src/style.css", {}, err => {
+  //style.css "\\src\\style.css"
+  await fs.cp(path.join(otherDIR_NAME, "src/style.css"), path.join(projectDirPath + "src/style.css"), {}, err => {
     if (err) console.log(err.message);
   });
 
   //index.html
-  await fs.cp(DIR_NAME + "\\index.html", projectDirPath + "/index.html", {}, err => {
+  await fs.cp(path.join(otherDIR_NAME, "index.html"), path.join(projectDirPath + "index.html"), {}, err => {
     if (err) console.log(err.message);
   });
 
   await fs.writeFile(
-    projectDirPath + "/package.json",
+    path.join(projectDirPath + "/package.json"),
     `
   {
     "name": "${projectNPMname}",
@@ -97,12 +106,12 @@ export async function create(newProjectData) {
   );
 
   //tsconfig.json
-  await fs.cp(DIR_NAME + "\\tsconfig.json", projectDirPath + "/tsconfig.json", {}, err => {
+  await fs.cp(path.join(otherDIR_NAME, "tsconfig.json"), projectDirPath + "/tsconfig.json", {}, err => {
     if (err) console.log(err.message);
   });
 
   //vite.config.js
-  await fs.cp(DIR_NAME + "\\vite.config.js", projectDirPath + "/vite.config.js", {}, err => {
+  await fs.cp(path.join(otherDIR_NAME, "vite.config.js"), projectDirPath + "/vite.config.js", {}, err => {
     if (err) console.log(err.message);
   });
 
@@ -126,13 +135,20 @@ function toCamelCase(inputString) {
 
 async function checkAndMakeDirectory(dir) {
   try {
+    //console.log(dir, "line 129");
     await stat(dir);
   } catch (error) {
+    //console.log("line 131", error);
     if (error.code === "ENOENT") {
       try {
-        await mkdir(dir);
+        await mkdir(dir, err => {
+          if (err) {
+            return console.log("Error creating file/directory");
+          }
+          console.log("File/Directory created successfully!");
+        });
       } catch (err) {
-        console.error(err.message);
+        console.error("line 136", err.message);
       }
     }
   }
