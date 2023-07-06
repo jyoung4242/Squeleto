@@ -11,6 +11,7 @@ import { setupDemo2 } from "./demo2.js";
 
 const { version } = JSON.parse(fs.readFileSync(new URL("package.json", import.meta.url), "utf-8"));
 let newProjedtData;
+const CWD = process.cwd();
 
 p.intro(
   chalk.blueBright(`
@@ -82,7 +83,7 @@ async function newProjectSurvey() {
       cwd: () =>
         p.text({
           message: chalk.greenBright("Enter path to create project:"),
-          initialValue: ".",
+          initialValue: CWD,
           validate: value => {
             if (value.length == 0) {
               return "Value is required";

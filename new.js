@@ -4,13 +4,19 @@ import * as fs from "node:fs";
 import path from "node:path";
 import url from "node:url";
 import shell from "shelljs";
+import process from "node:process";
+import { log } from "@clack/prompts";
 
 export async function create(newProjectData) {
   //setup new file structure
-  const DIR_NAME = path.dirname(url.fileURLToPath(import.meta.url));
+  //const DIR_NAME = path.dirname(url.fileURLToPath(import.meta.url));
+  const DIR_NAME = process.cwd();
+  console.log("Current Working Directory", DIR_NAME);
   //format project name
   let projectDirName = toCamelCase(newProjectData.gamename);
-  let projectDirPath = newProjectData.cwd + "/" + projectDirName;
+  //let projectDirPath = newProjectData.cwd + "/" + projectDirName;
+  let projectDirPath = path.join(DIR_NAME, projectDirName);
+  console.log("Created Project Path: ", projectDirPath);
   let projectNPMname = toCamelCase(newProjectData.gamename).toLowerCase();
   await checkAndMakeDirectory(projectDirPath);
 

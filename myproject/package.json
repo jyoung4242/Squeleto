@@ -1,0 +1,28 @@
+
+  {
+    "name": "myproject",
+    "version": "1.0.0",
+    "description": "my new game project",
+    "main": "index.js",
+    "scripts": {
+      "build": "vite build",
+      "dev": "vite",
+      "preview": "vite preview"
+    },
+    "keywords": [],
+    "author": "Bobs YourUncle",
+    "license": "ISC",
+    "dependencies": {
+      "@peasy-lib/peasy-assets": "latest",
+      "@peasy-lib/peasy-input": "latest",
+      "@peasy-lib/peasy-ui": "latest",
+      "@peasy-lib/peasy-states": "latest",
+      "@peasy-lib/peasy-engine": "latest"
+      
+    },
+    "devDependencies": {
+      "json": "latest",
+      "typescript": "latest",
+      "vite": "latest"
+    }
+  }
