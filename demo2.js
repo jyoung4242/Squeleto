@@ -6,10 +6,12 @@ import url from "node:url";
 
 export async function setupDemo2() {
   //setup new file structure
-  const DIR_NAME = path.dirname(url.fileURLToPath(import.meta.url));
+  const otherDIR_NAME = path.dirname(url.fileURLToPath(import.meta.url));
+  const DIR_NAME = process.cwd();
   //format project name
   let projectDirName = toCamelCase("Squeleto Demo 2");
-  let projectDirPath = "." + "/" + projectDirName;
+  //let projectDirPath = "." + "/" + projectDirName;
+  let projectDirPath = path.join(DIR_NAME, projectDirName + "/");
   let projectNPMname = toCamelCase("SqueletoDemo").toLowerCase();
   await checkAndMakeDirectory(projectDirPath);
 
@@ -21,27 +23,27 @@ export async function setupDemo2() {
   await checkAndMakeDirectory(projectDirPath + "/public");
 
   //make the library files
-  await fs.cp(DIR_NAME + "\\_Squeleto\\", projectDirPath + "/_Squeleto/", { recursive: true }, err => {
+  await fs.cp(path.join(otherDIR_NAME, "_Squeleto\\"), path.join(projectDirPath, "_Squeleto"), { recursive: true }, err => {
     if (err) console.log(err.message);
   });
 
   //scenes
-  await fs.cp(DIR_NAME + "\\Demo2", projectDirPath + "/src", { recursive: true }, err => {
+  await fs.cp(path.join(otherDIR_NAME, "Demo2\\"), path.join(projectDirPath, "src"), { recursive: true }, err => {
     if (err) console.log(err.message);
   });
 
   //main.ts
-  await fs.cp(DIR_NAME + "\\Demo2\\main.ts", projectDirPath + "/src/main.ts", {}, err => {
+  await fs.cp(path.join(otherDIR_NAME, "Demo2\\main.ts"), path.join(projectDirPath, "src/main.ts"), {}, err => {
     if (err) console.log(err.message);
   });
 
   //style.css
-  await fs.cp(DIR_NAME + "\\Demo2\\style.css", projectDirPath + "/src/style.css", {}, err => {
+  await fs.cp(path.join(otherDIR_NAME, "Demo2\\style.css"), path.join(projectDirPath, "src/style.css"), {}, err => {
     if (err) console.log(err.message);
   });
 
   //index.html
-  await fs.cp(DIR_NAME + "\\index.html", projectDirPath + "/index.html", {}, err => {
+  await fs.cp(path.join(otherDIR_NAME, "index.html"), path.join(projectDirPath, "index.html"), {}, err => {
     if (err) console.log(err.message);
   });
 
@@ -86,12 +88,12 @@ export async function setupDemo2() {
   );
 
   //tsconfig.json
-  await fs.cp(DIR_NAME + "\\tsconfig.json", projectDirPath + "/tsconfig.json", {}, err => {
+  await fs.cp(path.join(otherDIR_NAME, "tsconfig.json"), path.join(projectDirPath, "tsconfig.json"), {}, err => {
     if (err) console.log(err.message);
   });
 
   //vite.config.js
-  await fs.cp(DIR_NAME + "\\vite.config.js", projectDirPath + "/vite.config.js", {}, err => {
+  await fs.cp(path.join(otherDIR_NAME, "vite.config.js"), path.join(projectDirPath, "vite.config.js"), {}, err => {
     if (err) console.log(err.message);
   });
 

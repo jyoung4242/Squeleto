@@ -25,8 +25,8 @@ export async function create(newProjectData) {
   await checkAndMakeDirectory(projectDirPath + "/dist");
   await checkAndMakeDirectory(projectDirPath + "/public");
 
-  //make the library files - \\_Squeleto\\
-  await fs.cp(path.join(otherDIR_NAME, "_Squeleto\\"), projectDirPath + "/_Squeleto/", { recursive: true }, err => {
+  //make the library files -
+  await fs.cp(path.join(otherDIR_NAME, "_Squeleto\\"), path.join(projectDirPath, "_Squeleto"), { recursive: true }, err => {
     if (err) console.log(err.message);
   });
 
