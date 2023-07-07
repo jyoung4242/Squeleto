@@ -25,22 +25,22 @@ export async function setupDemo1() {
   await checkAndMakeDirectory(projectDirPath + "/public");
 
   //make the library files-
-  await fs.cp(path.join(otherDIR_NAME, "_Squeleto\\"), path.join(projectDirPath, "_Squeleto"), { recursive: true }, err => {
+  await fs.cp(path.join(otherDIR_NAME, "_Squeleto/"), path.join(projectDirPath, "_Squeleto"), { recursive: true }, err => {
     if (err) console.log(err.message);
   });
 
   //scenes path.join(otherDIR_NAME, "Demo1\\")
-  await fs.cp(path.join(otherDIR_NAME, "Demo1\\"), path.join(projectDirPath, "src"), { recursive: true }, err => {
+  await fs.cp(path.join(otherDIR_NAME, "Demo1/"), path.join(projectDirPath, "src"), { recursive: true }, err => {
     if (err) console.log(err.message);
   });
 
   //main.ts
-  await fs.cp(path.join(otherDIR_NAME, "Demo1\\main.ts"), path.join(projectDirPath, "src/main.ts"), {}, err => {
+  await fs.cp(path.join(otherDIR_NAME, "Demo1/main.ts"), path.join(projectDirPath, "src/main.ts"), {}, err => {
     if (err) console.log(err.message);
   });
 
   //style.css \demo1\styles.css
-  await fs.cp(path.join(otherDIR_NAME, "Demo1\\style.css"), path.join(projectDirPath, "src/style.css"), {}, err => {
+  await fs.cp(path.join(otherDIR_NAME, "Demo1/style.css"), path.join(projectDirPath, "src/style.css"), {}, err => {
     if (err) console.log(err.message);
   });
 
