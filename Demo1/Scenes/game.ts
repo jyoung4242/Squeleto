@@ -4,6 +4,7 @@ import { GameRenderer, RenderState, RendererConfig } from "../../_Squeleto/Rende
 import { Assets } from "@peasy-lib/peasy-assets";
 import { StoryFlagManager } from "../../_Squeleto/StoryFlagManager";
 import { Chiptune } from "../../_Squeleto/Chiptune";
+import { ParticleSystem } from "../PlugIns/Particles";
 
 // Next import your specific game content (Objects, Maps,etc...)
 import { Kitchen } from "../Maps/kitchen";
@@ -15,6 +16,7 @@ import { Bookshelf } from "../Game Objects/Bookshelf";
 import { NPC1 } from "../Game Objects/npc1";
 import { Planter } from "../Game Objects/planter";
 import { PizzaThingy } from "../Game Objects/pizzathingy";
+import { bookCaseParticleSystem } from "../Particles/bookcaseParticles";
 
 // Finally Import your custom plug-ins
 import { DialogManager } from "../PlugIns/DialogueManager";
@@ -32,6 +34,8 @@ export class Game extends Scene {
   // when using plugins, be very careful how you access them
   //****************************************** */
   dm = new DialogManager();
+
+  psystems = new bookCaseParticleSystem(Assets);
 
   // StoryFlag system uses a default set of conditions that gets passed around
   // If larger, this can be brought in from its own module
@@ -53,6 +57,8 @@ export class Game extends Scene {
   public template = `<scene-layer class="scene" style="width: 100%; height: 100%; position: absolute; top: 0; left:0; color: white;">
     ${this.renderer.template}
     ${this.dm.template}
+    ${this.psystems.template}
+
   </scene-layer>`;
 
   bgm: Chiptune | undefined | null;
@@ -77,6 +83,8 @@ export class Game extends Scene {
       "step.wav",
       "error.wav",
       "door.mp3",
+      "spark.png",
+      "spark.mp3",
     ]);
 
     // **************************************
@@ -104,7 +112,7 @@ export class Game extends Scene {
     let objConfig = [
       new Player(Assets, this.sm, this.dm),
       new Counter(Assets, this.sm),
-      new Bookshelf(Assets, this.sm, this.dm),
+      new Bookshelf(Assets, this.sm, this.dm, this.renderState.camera, this.psystems),
       new NPC1(Assets, this.sm, this.dm),
       new Planter(Assets, this.sm),
       new PizzaThingy(Assets, this.sm),

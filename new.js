@@ -38,18 +38,6 @@ export async function create(newProjectData) {
   await checkAndMakeDirectory(projectDirPath + "/src/Maps");
   await checkAndMakeDirectory(projectDirPath + "/src/PlugIns");
 
-  //scenes
-  /* console.log(chalk.redBright("*********************************"));
-  console.log(chalk.redBright(DIR_NAME + "src/Scenes"));
-  console.log(chalk.redBright(projectDirPath + "/src/Scenes"));
-  console.log(chalk.redBright(path.join(projectDirPath, "src/Scenes")));
-  console.log(chalk.redBright(path.join(otherDIR_NAME, "src/Scenes")));
-  console.log(chalk.redBright("*********************************")); */
-
-  /*  await fs.cp(DIR_NAME + "\\src\\Scenes", path.join(projectDirPath, "src/Scenes"), { recursive: true }, err => {
-    if (err) console.log(err.message);
-  }); */
-
   await fs.cp(path.join(otherDIR_NAME, "src/Scenes"), path.join(projectDirPath, "src/Scenes"), { recursive: true }, err => {
     if (err) console.log(err.message);
   });

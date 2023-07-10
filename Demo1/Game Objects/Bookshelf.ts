@@ -4,6 +4,12 @@ import { StoryFlagManager } from "../../_Squeleto/StoryFlagManager";
 import { DialogManager } from "../PlugIns/DialogueManager";
 import { bookcasePopup } from "../Dialogue/bookcasepopup";
 import { DialogEvent } from "../Events/dialogue";
+import { particleEvent } from "../Events/particleEvent";
+import { ParticleSystem } from "../PlugIns/Particles";
+import { Camera } from "../../_Squeleto/Camera";
+import { playSFX } from "../Events/sfx";
+import { SFX } from "../../_Squeleto/Sound API";
+import { WaitEvent } from "../Events/wait";
 
 /**
  * Bookshelf GameObject
@@ -14,7 +20,9 @@ import { DialogEvent } from "../Events/dialogue";
 
 export class Bookshelf extends GameObject {
   dm;
-  constructor(assets: any, StoryFlags: StoryFlagManager, dm: DialogManager) {
+  ps;
+  cm;
+  constructor(assets: any, StoryFlags: StoryFlagManager, dm: DialogManager, camera: Camera, ps: ParticleSystem) {
     let config: GameObjectConfig = {
       name: "Bookshelf",
       startingMap: "kitchen",
@@ -33,20 +41,38 @@ export class Bookshelf extends GameObject {
     };
     super(config);
     this.dm = dm;
+    this.cm = camera;
     this.SM = StoryFlags;
+    this.ps = ps;
+
+    // Sound Effect Registration
+    SFX.register({ name: "spark", src: assets.audio("spark").src });
+
     this.interactionEvents = [
       {
         conditions: { metBookcase: false },
-        content: [new DialogEvent(new bookcasePopup(this), this.dm, "Bookshelf", this.SM)],
+        content: [
+          new playSFX("spark"),
+          new particleEvent(ps),
+          new WaitEvent(500),
+          new DialogEvent(new bookcasePopup(this), this.dm, "Bookshelf", this.SM),
+        ],
       },
       {
         conditions: { metBookcase: true },
-        content: [new DialogEvent(new bookcasePopup(this), this.dm, "Bookshelf", this.SM)],
+        content: [
+          new playSFX("spark"),
+          new particleEvent(ps),
+          new WaitEvent(500),
+          new DialogEvent(new bookcasePopup(this), this.dm, "Bookshelf", this.SM),
+        ],
       },
     ];
   }
 
-  update(): boolean {
+  update(deltaTime: number): boolean {
+    this.ps.moveSystem(Camera.xPos + this.xPos, Camera.yPos + this.yPos);
+    this.ps.update(deltaTime, performance.now());
     return true;
   }
   physicsUpdate(): boolean {

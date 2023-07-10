@@ -22,6 +22,8 @@ export class playSFX extends GameEvent {
   init(who: GameObject): Promise<void> {
     return new Promise(resolve => {
       this.who = who;
+      console.log(this.who, this.sound);
+
       SFX.play(this.sound);
       resolve();
     });

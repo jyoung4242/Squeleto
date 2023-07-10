@@ -81,7 +81,7 @@ export class Camera {
 
     this.shakeElapsedTime += time; //* 1000
     this.shakeIntervalTime += time * 1000;
-    //console.log("shaking:", this.shakeIntervalTime, this.shakeDuration);
+
     // We're done shaking
     if (this.shakeElapsedTime >= this.shakeDuration) {
       this.isShaking = false;
