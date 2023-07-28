@@ -1,15 +1,14 @@
 {
-  "name": "squeleto",
-  "version": "0.5.1",
+  "name": "squeleto_demo3",
+  "version": "1.0.0",
   "description": "my new game project",
   "main": "index.js",
   "scripts": {
     "build": "vite build",
     "dev": "vite",
     "preview": "vite preview",
-    "server": "ts-node --esm ./src/Server/server.ts"
+    "start": "ts-node --esm ./src/Server/server.ts"
   },
-  "type": "module",
   "keywords": [],
   "author": "Mookie",
   "license": "ISC",

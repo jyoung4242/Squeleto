@@ -1,4 +1,5 @@
 import { HathoraClient, HathoraConnection } from "@hathora/client-sdk";
+import { AuthV1Api, Configuration } from "@hathora/hathora-cloud-sdk";
 
 export enum ClientMessageTypes {
   CONNECTION,
@@ -6,12 +7,14 @@ export enum ClientMessageTypes {
 
 export enum AuthenticationType {
   anonymous = "anon",
-  google = "google",
-  nickname = "nickname",
-  email = "email",
 }
+/**
+ * google = "google",
+   nickname = "nickname",
+   email = "email",
+ */
 
-export default class MultiPlayerInterface {
+export class MultiPlayerInterface {
   client: HathoraClient;
   token: string | null = null;
   connection: HathoraConnection | undefined;
@@ -36,19 +39,6 @@ export default class MultiPlayerInterface {
     if (local) connectionInfo = { host: "localhost", port: this.portnum, transportType: "tcp" as const };
     else connectionInfo = undefined; //cloud
 
-    /*
-    temporary gaurd condition for different auth types
-    only support anonymous ATM
-        
-    if (AuthTypes != undefined) throw Error("only supporting anonymous auth ATM");
-
-    if (AuthTypes) {
-      this.authTypes = [...AuthTypes];
-    } else {
-      this.authTypes = [AuthenticationType.anonymous];
-    }
-    */
-
     this.authTypes = [AuthenticationType.anonymous];
     this.appID = app_id;
     this.defaultRoom = defaultRoomID;
@@ -56,7 +46,6 @@ export default class MultiPlayerInterface {
     this.currentRoom = "";
     this.connection = undefined;
     this.updateCallback = stateUpdateCallback;
-    this.login();
   }
 
   async login() {

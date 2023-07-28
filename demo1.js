@@ -14,7 +14,7 @@ export async function setupDemo1() {
   let projectDirName = toCamelCase("Squeleto Demo 1");
   //let projectDirPath = "." + "/" + projectDirName;
   let projectDirPath = path.join(DIR_NAME, projectDirName + "/");
-  let projectNPMname = toCamelCase("SqueletoDemo").toLowerCase();
+  let projectNPMname = toCamelCase("SqueletoDemo1").toLowerCase();
   await checkAndMakeDirectory(projectDirPath);
 
   //make library directory
