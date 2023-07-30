@@ -2,7 +2,7 @@
 
 <h4 align="center">Squeleto Game Library Setup Utility</h4>
 
-![Screenshot](/Squeleto.png?raw=true "Screenshot")
+![Screenshot](./Squeleto.png)
 
 # 👋 Introducing `Squeleto`
 
