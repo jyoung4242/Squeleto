@@ -1,31 +1,18 @@
-//import Components
-import { Viewport } from "../_Squeleto/Viewport";
-import { StateManagement } from "../_Squeleto/StateManagement";
-import { UI } from "@peasy-lib/peasy-ui";
+//Library Modules
+import "./style.css";
+import { SceneManager } from "../_SqueletoECS/Scene";
 
-/**************************************
- * Import and Configure Scenes
- **************************************/
-//import Scenes
-import { Login } from "./Scenes/login";
+//Content Modules
+import { LoadComponents } from "./Components/_components";
+
+//Scenes
+import { Lobby } from "./Scenes/lobby";
 import { Game } from "./Scenes/game";
-let scenes = [Login, Game];
 
-/**************************************
- * Import and configure game Viewport
- **************************************/
-export const datamodel = new StateManagement();
-const viewport = Viewport;
-viewport.initialize(datamodel, scenes, 500, "3.125/1.75");
-const template = `${viewport.template}`;
+//Components
+LoadComponents();
 
-/**************************************
-//UI Rendering Engine instantiation
-**************************************/
-
-await UI.create(document.body, datamodel, template).attached;
-
-/**************************************
-//set default scene on startup
-**************************************/
-viewport.setScene(0);
+//Load Scenes
+let sceneMgr = new SceneManager();
+sceneMgr.register(Lobby, Game);
+sceneMgr.set("lobby");

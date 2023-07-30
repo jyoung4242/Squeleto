@@ -31,7 +31,7 @@ const projectType = await p.select({
     { value: "newECS", label: chalk.blueBright("Start New Squeleto ECS Project"), hint: "Blank ECS Projet" },
     { value: "d1", label: chalk.blueBright("Download Tutorial #1"), hint: "Top Down RPG" },
     { value: "d2", label: chalk.blueBright("Download Tutorial #2"), hint: "Side View Platformer" },
-    { value: "d3", label: chalk.blueBright("Download Tutorial #3"), hint: "MultiPlayer Client/Server" },
+    { value: "d3", label: chalk.blueBright("Download Tutorial #3"), hint: "ECS Format - MultiPlayer Client/Server" },
     { value: "d4", label: chalk.blueBright("Open Docs"), hint: "Squeleto Documentation" },
   ],
 });

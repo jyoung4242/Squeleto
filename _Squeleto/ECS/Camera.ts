@@ -21,7 +21,7 @@ export class Camera {
   lerpDelay: number = 0;
   lerpUpdateInterval: number = 100;
   lerpStartVector: Vector;
-  lerpHandle: number = 0;
+  lerpHandle: NodeJS.Timer | undefined;
   lerpPercent: number = 0;
   cameraFocus: CameraFocus;
   oldFocusPoint: Vector;
@@ -69,18 +69,18 @@ export class Camera {
     }
     camera-layer{
       position: absolute;
-           top:0;
+      top:0;
       left: 0;
-     
+      transition: transform 0.25s;
     }
   </style>
 
   <view-port class="viewport">
         <viewport-inner>
-          < \${ vpSystem === } \${ vpSystem <=* vpSystems }>
           <camera-layer style=" width: \${size.x}px;height: \${size.y}px; transform: translate3d(\${position.x}px, \${position.y}px, 0px);">
               < \${ entity === } \${ entity <=* entities }>
           </camera-layer>
+          < \${ vpSystem === } \${ vpSystem <=* vpSystems }>
         </viewport-inner>
         
   </view-port>

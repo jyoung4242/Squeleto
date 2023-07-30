@@ -3,6 +3,7 @@ import { stat, mkdir } from "node:fs/promises";
 import * as fs from "node:fs";
 import path from "node:path";
 import url from "node:url";
+import open, { apps } from "open";
 
 export async function setupDemo3() {
   //setup new file structure
@@ -17,13 +18,13 @@ export async function setupDemo3() {
 
   //make library directory
 
-  await checkAndMakeDirectory(projectDirPath + "/_Squeleto");
+  await checkAndMakeDirectory(projectDirPath + "/_SqueletoECS");
   await checkAndMakeDirectory(projectDirPath + "/src");
   await checkAndMakeDirectory(projectDirPath + "/dist");
   await checkAndMakeDirectory(projectDirPath + "/public");
 
   //make the library files
-  await fs.cp(path.join(otherDIR_NAME, "_Squeleto/"), path.join(projectDirPath, "_Squeleto"), { recursive: true }, err => {
+  await fs.cp(path.join(otherDIR_NAME, "_Squeleto/ECS/"), path.join(projectDirPath, "_SqueletoECS"), { recursive: true }, err => {
     if (err) console.log(err.message);
   });
 
@@ -42,6 +43,11 @@ export async function setupDemo3() {
     if (err) console.log(err.message);
   });
 
+  //types.d.ts
+  await fs.cp(path.join(otherDIR_NAME, "Demo3/types.d.ts"), path.join(projectDirPath, "src/types.d.ts"), {}, err => {
+    if (err) console.log(err.message);
+  });
+
   //index.html
   await fs.cp(path.join(otherDIR_NAME, "index.html"), path.join(projectDirPath, "index.html"), {}, err => {
     if (err) console.log(err.message);
@@ -53,7 +59,7 @@ export async function setupDemo3() {
   {
     "name": "squeleto_demo3",
     "version": "1.0.0",
-    "description": "my new game project",
+    "description": "my new ECS game project",
     "main": "index.js",
     "scripts": {
       "build": "vite build",
@@ -74,12 +80,15 @@ export async function setupDemo3() {
       "@hathora/client-sdk": "^1.2.0",
       "@hathora/hathora-cloud-sdk": "^0.0.4",
       "@hathora/server-sdk": "^1.1.0",
-      "howler": "latest",
       "dotenv": "^16.3.1",
       "uuid": "latest",
-      "pako": "latest"
+      "lodash": "latest",
+      "path": "^0.12.7"
     },
     "devDependencies": {
+      "@types/lodash": "latest",
+      "@types/node": "^20.4.5",
+      "@types/uuid": "latest",
       "json": "latest",
       "typescript": "latest",
       "vite": "latest",
@@ -103,6 +112,10 @@ export async function setupDemo3() {
   });
 
   console.log(chalk.blueBright(`Created Squeleto Demo 3 project at ${projectDirPath}`));
+  console.log(chalk.yellowBright(`Make sure you read the readme.html file for `));
+  console.log(chalk.yellowBright(`properly setting up .env and connecting to `));
+  console.log(chalk.yellowBright(`Hathora`));
+  await open(path.join(projectDirPath, "/src/readme.html"), { app: { name: apps.browser } });
 }
 
 function toCamelCase(inputString) {

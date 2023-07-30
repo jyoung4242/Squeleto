@@ -1,74 +1,153 @@
-// import all Squeleto modules required
-import { Scene } from "../../_Squeleto/SceneManager";
-import { GameRenderer, RenderState, RendererConfig } from "../../_Squeleto/Renderer";
-import { Assets } from "@peasy-lib/peasy-assets";
+//Library
+import { Scene } from "../../_SqueletoECS/Scene";
+import { Engine } from "@peasy-lib/peasy-engine";
+import { Vector } from "../../_SqueletoECS/Vector";
+import { MultiPlayerInterface } from "../../_SqueletoECS/Multiplayer";
+import { Entity } from "../../_SqueletoECS/entity";
 
-// all Squeleto Scenes extend the Scene Class
+//Scene Systems
+import { Camera, ICameraConfig } from "../../_SqueletoECS/Camera";
+import { KeypressSystem } from "../Systems/keypress";
+
+//Entities
+import { PlayerEntity } from "../Entities/playerEntity";
+import { MapEntity } from "../Entities/map";
+
+//Server Messages
+import {
+  ServerMessageTypes,
+  ServerErrorMessage,
+  ServerStateUpdateMessage,
+  ServerJoinMessage,
+  ServerPlayerLeftMessage,
+} from "../Server/server";
+import { log } from "console";
+
 export class Game extends Scene {
-  renderer = GameRenderer; // Game renderer... required
-  renderState = RenderState; // this is the gameengine state values
-  sm = undefined; // storyflag manager, not used in the demo 2
-
-  /**
-   * plug-ins and UI elements are inserted after the renderer, in this case HUD.template
-   * recommend NOT touching the scene-layer params
-   */
+  camera: Camera | undefined;
+  firstUpdate: Boolean = true;
+  name: string = "game";
+  entities: any = [];
+  entitySystems: any = [];
+  sceneSystems: any = [];
+  HathoraClient: MultiPlayerInterface | undefined;
   public template = `
-  <scene-layer class="scene" style="width: 100%; height: 100%; position: absolute; top: 0; left:0; color: white;">
-    ${this.renderer.template}
-  </scene-layer>`;
+      <scene-layer>
+          < \${ sceneSystem === } \${ sceneSystem <=* sceneSystems }
+      </scene-layer>
+    `;
 
-  // Scenes have an init() method that is called when the scene is entered
-  // This can be used for all Scene initializations
-  public async init() {
-    // Peasy-assets is used for Asset management, this caches
-    // all images, audio files, and custom fonts for the game
-    // Loading Assets
-    Assets.initialize({ src: "../src/Assets/" });
-    await Assets.load([]);
+  public init(): void {
+    console.log("**************************************");
+    console.log("ENTERING GAME SCENE");
+    console.log("**************************************");
+    this.HathoraClient = this.params[0];
+    (this.HathoraClient as MultiPlayerInterface).updateCallback = this.serverMessageHandler;
 
-    // Initialize Renderer
-    const renderConfig: RendererConfig = {
-      state: this.renderState,
-      storyFlags: this.sm,
-      viewportDims: { width: 500, aspectratio: 3 / 2 },
-      objectRenderOrder: 2,
-      physicsFPS: 30,
-      renderingFPS: 60,
+    console.log("creating camera");
+    const cameraConfig: ICameraConfig = {
+      name: "camera",
+      gameEntities: this.entities,
+      position: new Vector(0, 0),
+      size: new Vector(400, 266.67),
+      viewPortSystems: [],
     };
-    this.renderer.initialize(renderConfig);
 
-    // Load Maps
-    // myMap is a map object from myMap.ts under the Maps folder
-    // changeMap is called to set the default map
+    let camera = Camera.create(cameraConfig);
 
-    /*this.renderer.createMap([await myMap.create(Assets)]);
-    this.renderer.changeMap("myMap");*/
+    this.entities.push(MapEntity.create());
+    camera.vpSystems.push(new KeypressSystem(this.HathoraClient as MultiPlayerInterface));
+    this.camera = camera;
+    //GameLoop
+    console.log("starting engine");
+    this.sceneSystems.push(camera);
+    console.log(this.entities);
 
-    // Load Objects
-    // This demo has three objects used at the start of the game
-    // 2 targets and the player
-    // Target has a special create method that allows it to parse the Aseprite file prior to loading
-    // Otherwise, like player, you could just pass `new ObjectName()` to the objConfig
-
-    /*
-    let objConfig = [new Player(Assets, this.renderer.createObject, this.renderer.destroyObject), newTarget1, newTarget2];
-    //@ts-ignore
-    this.renderer.createObject(objConfig);*/
-
-    // Set Camera
-    // this tells the camera to follow the player object, but...
-    // it locks the y axis so it only follows the x axis of the player
-
-    //this.renderer.cameraFollow("Player", { lockY: true, lockYval: 45 });
-
-    // START your engines!
-    // this.renderer.showCollisionBodies(true);  // this is for diagnostics only, shows the collision bodies
-    // the renderer.engineStart() method initiates the gameloop
-    this.renderer.engineStart();
+    Engine.create({ fps: 60, started: true, callback: this.update });
   }
-  // all scenes have an exit method
-  // this is the function that runs on transition to another scene
-  // use is for any teardown code you need to run
-  public exit() {}
+
+  public exit(): void {}
+
+  serverMessageHandler = (msg: ServerMessageTypes) => {
+    switch (msg.type) {
+      case "stateupdate":
+        this.stateUpdate((msg as ServerStateUpdateMessage).state);
+        break;
+      case "newUser":
+        this.addEntity((msg as ServerJoinMessage).player);
+        break;
+      case "userLeftServer":
+        this.removeEntity((msg as ServerPlayerLeftMessage).playerID);
+        break;
+      case "serverError":
+        console.warn((msg as ServerErrorMessage).errormessage);
+        break;
+    }
+  };
+
+  update = (deltaTime: number) => {
+    this.sceneSystems.forEach((system: any) => {
+      system.update(deltaTime / 1000, 0, this.entities);
+    });
+  };
+
+  stateUpdate(state: any) {
+    if (this.firstUpdate) {
+      this.firstUpdate = false;
+      console.log(state);
+      state.players.forEach((player: any) => {
+        this.addEntity(player);
+      });
+      if (this.getClientEntity()) this.camera?.follow(this.getClientEntity() as Entity);
+    }
+
+    this.entities.forEach((entity: any) => {
+      //find entity in state
+      if (entity.name) {
+        const entIndex = state.players.findIndex((player: any) => player.id == entity.name);
+        if (entIndex >= 0) {
+          entity.position = state.players[entIndex].position;
+          const status = state.players[entIndex].status;
+          const direction = state.players[entIndex].direction;
+          console.log();
+
+          if (status != entity.barbarian.status || direction != entity.barbarian.direction)
+            entity.barbarian.changeSequence(status, direction);
+        }
+      }
+    });
+  }
+
+  addEntity = (newPlayer: any) => {
+    //look to ensure entity, doesn't already exist
+
+    const entIndex = this.entities.findIndex((ent: any) => {
+      return ent.name == newPlayer.id;
+    });
+    if (entIndex == -1) {
+      console.log("ADDING ENTITY: ", newPlayer);
+      this.entities.push(PlayerEntity.create(newPlayer.id, newPlayer.position));
+      console.log(this.entities);
+      if (this.getClientEntity()) this.camera?.follow(this.getClientEntity() as Entity);
+    }
+  };
+
+  removeEntity = (playerID: string) => {
+    //find Index of player
+    const playerIndex = this.entities.findIndex((plr: any) => {
+      plr.id == playerID;
+    });
+    if (playerIndex >= 0) {
+      console.log("REMOVING ENTITY: ", playerID);
+      this.entities.splice(playerIndex, 1);
+    }
+  };
+
+  getClientEntity = (): Entity | undefined => {
+    const entIndex = this.entities.findIndex((ent: any) => ent.name == this.HathoraClient?.userdata.id);
+    if (entIndex >= 0) {
+      return this.entities[entIndex];
+    }
+    return undefined;
+  };
 }

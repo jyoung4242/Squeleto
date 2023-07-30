@@ -10,9 +10,10 @@ export class Entity {
   <style>
     .entity {
       position: absolute;
+      transition: transform 0.25s;
     }
   </style>
-  <entity-layer class="entity" style="transform: translate3d(\${position.x}px,\${position.y}px, 0px); width: \${size.x}px; height: \${size.y}px;z-index:\${ysort}">
+  <entity-layer class="entity" style="transform: translate3d(\${position.x}px,\${position.y}px, 0px); width: \${size.x}px; height: \${size.y}px;z-index:\${zindex}">
     < \${ component === } \${ component <=* components } >
   </entity-layer>
   `;
