@@ -2,12 +2,13 @@
 import chalk from "chalk";
 import * as p from "@clack/prompts";
 import fs from "node:fs";
-import path from "node:path";
-import * as sh from "shelljs";
+import open from "open";
 
 import { create } from "./new.js";
+import { createECS } from "./newECS.js";
 import { setupDemo1 } from "./demo1.js";
 import { setupDemo2 } from "./demo2.js";
+import { setupDemo3 } from "./demo3.js";
 
 const { version } = JSON.parse(fs.readFileSync(new URL("package.json", import.meta.url), "utf-8"));
 let newProjedtData;
@@ -24,9 +25,12 @@ p.intro(
 const projectType = await p.select({
   message: chalk.blueBright("Select your project option."),
   options: [
-    { value: "new", label: chalk.blueBright("Start New Project"), hint: "Blank Projet" },
+    { value: "new", label: chalk.blueBright("Start New Squeleto Basic Project"), hint: "Blank Projet" },
+    { value: "newECS", label: chalk.blueBright("Start New Squeleto ECS Project"), hint: "Blank ECS Projet" },
     { value: "d1", label: chalk.blueBright("Download Tutorial #1"), hint: "Top Down RPG" },
     { value: "d2", label: chalk.blueBright("Download Tutorial #2"), hint: "Side View Platformer" },
+    { value: "d3", label: chalk.blueBright("Download Tutorial #3"), hint: "ECS Format - MultiPlayer Client/Server" },
+    { value: "d4", label: chalk.blueBright("Open Docs"), hint: "Squeleto Documentation" },
   ],
 });
 if (p.isCancel(projectType)) {
@@ -44,10 +48,11 @@ if (p.isCancel(projectType)) {
 switch (projectType) {
   case "new":
     await newProjectSurvey();
-    if (newProjedtData.multiplayer) {
-    } else {
-      create(newProjedtData);
-    }
+    create(newProjedtData);
+    break;
+  case "newECS":
+    await newProjectSurvey();
+    createECS(newProjedtData);
     break;
   case "d1":
     setupDemo1();
@@ -55,17 +60,30 @@ switch (projectType) {
   case "d2":
     setupDemo2();
     break;
+  case "d3":
+    setupDemo3();
+    break;
+  case "d4":
+    open("https://jyoung4242.github.io/Squeleto-Docs/#/");
+    break;
 }
-
-p.outro(
-  chalk.blueBright(`
+if (projectType == "d4") {
+  p.outro(
+    chalk.blueBright(`
+    OPENING DOCS - LEAVING SQUELETO
+  `)
+  );
+} else {
+  p.outro(
+    chalk.blueBright(`
       ************************************
       cd into your new directory
       run \`npm install\`
       run \`npm run dev\`
       SETUP COMPLETE - LEAVING SQUELETO
       ************************************`)
-);
+  );
+}
 
 async function newProjectSurvey() {
   newProjedtData = await p.group(
@@ -100,7 +118,6 @@ async function newProjectSurvey() {
             }
           },
         }),
-      multiplayer: () => p.confirm({ message: chalk.greenBright("Is your game multiplayer?") }),
     },
     {
       // On Cancel callback that wraps the group

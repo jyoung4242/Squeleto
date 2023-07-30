@@ -3,43 +3,48 @@ import { stat, mkdir } from "node:fs/promises";
 import * as fs from "node:fs";
 import path from "node:path";
 import url from "node:url";
+import open, { apps } from "open";
 
-export async function setupDemo1() {
+export async function setupDemo3() {
   //setup new file structure
-  //const DIR_NAME = path.dirname(url.fileURLToPath(import.meta.url));
   const otherDIR_NAME = path.dirname(url.fileURLToPath(import.meta.url));
   const DIR_NAME = process.cwd();
   //format project name
-  let projectDirName = toCamelCase("Squeleto Demo 1");
+  let projectDirName = toCamelCase("Squeleto Demo 3");
   //let projectDirPath = "." + "/" + projectDirName;
   let projectDirPath = path.join(DIR_NAME, projectDirName + "/");
-  let projectNPMname = toCamelCase("SqueletoDemo1").toLowerCase();
+  let projectNPMname = toCamelCase("SqueletoDemo3").toLowerCase();
   await checkAndMakeDirectory(projectDirPath);
 
   //make library directory
 
-  await checkAndMakeDirectory(projectDirPath + "/_Squeleto");
+  await checkAndMakeDirectory(projectDirPath + "/_SqueletoECS");
   await checkAndMakeDirectory(projectDirPath + "/src");
   await checkAndMakeDirectory(projectDirPath + "/dist");
   await checkAndMakeDirectory(projectDirPath + "/public");
 
-  //make the library files-
-  await fs.cp(path.join(otherDIR_NAME, "_Squeleto/"), path.join(projectDirPath, "_Squeleto"), { recursive: true }, err => {
+  //make the library files
+  await fs.cp(path.join(otherDIR_NAME, "_Squeleto/ECS/"), path.join(projectDirPath, "_SqueletoECS"), { recursive: true }, err => {
     if (err) console.log(err.message);
   });
 
-  //scenes path.join(otherDIR_NAME, "Demo1\\")
-  await fs.cp(path.join(otherDIR_NAME, "Demo1/"), path.join(projectDirPath, "src"), { recursive: true }, err => {
+  //scenes
+  await fs.cp(path.join(otherDIR_NAME, "Demo3/"), path.join(projectDirPath, "src"), { recursive: true }, err => {
     if (err) console.log(err.message);
   });
 
   //main.ts
-  await fs.cp(path.join(otherDIR_NAME, "Demo1/main.ts"), path.join(projectDirPath, "src/main.ts"), {}, err => {
+  await fs.cp(path.join(otherDIR_NAME, "Demo3/main.ts"), path.join(projectDirPath, "src/main.ts"), {}, err => {
     if (err) console.log(err.message);
   });
 
-  //style.css \demo1\styles.css
-  await fs.cp(path.join(otherDIR_NAME, "Demo1/style.css"), path.join(projectDirPath, "src/style.css"), {}, err => {
+  //style.css
+  await fs.cp(path.join(otherDIR_NAME, "Demo3/style.css"), path.join(projectDirPath, "src/style.css"), {}, err => {
+    if (err) console.log(err.message);
+  });
+
+  //types.d.ts
+  await fs.cp(path.join(otherDIR_NAME, "Demo3/types.d.ts"), path.join(projectDirPath, "src/types.d.ts"), {}, err => {
     if (err) console.log(err.message);
   });
 
@@ -52,15 +57,17 @@ export async function setupDemo1() {
     projectDirPath + "/package.json",
     `
   {
-    "name": "squeleto_demo1",
+    "name": "squeleto_demo3",
     "version": "1.0.0",
-    "description": "my new game project",
+    "description": "my new ECS game project",
     "main": "index.js",
     "scripts": {
       "build": "vite build",
       "dev": "vite",
-      "preview": "vite preview"
+      "preview": "vite preview",
+      "server": "ts-node --esm ./src/Server/server.ts"
     },
+    "type": "module",
     "keywords": [],
     "author": "Mookie",
     "license": "ISC",
@@ -70,14 +77,22 @@ export async function setupDemo1() {
       "@peasy-lib/peasy-ui": "latest",
       "@peasy-lib/peasy-states": "latest",
       "@peasy-lib/peasy-engine": "latest",
-      "howler": "latest",
-      "uuid": "latest"
-
+      "@hathora/client-sdk": "*",
+      "@hathora/hathora-cloud-sdk": "*",
+      "@hathora/server-sdk": "*",
+      "dotenv": "*",
+      "uuid": "latest",
+      "lodash": "latest",
+      "path": "*"
     },
     "devDependencies": {
+      "@types/lodash": "latest",
+      "@types/node": "*",
+      "@types/uuid": "latest",
       "json": "latest",
       "typescript": "latest",
-      "vite": "latest"
+      "vite": "latest",
+      "ts-node": "latest"
     }
   }`,
     {},
@@ -86,7 +101,7 @@ export async function setupDemo1() {
     }
   );
 
-  //tsconfig.json path.join(otherDIR_NAME, "tsconfig.json"), path.join(projectDirPath, "tsconfig.json")
+  //tsconfig.json
   await fs.cp(path.join(otherDIR_NAME, "tsconfig.json"), path.join(projectDirPath, "tsconfig.json"), {}, err => {
     if (err) console.log(err.message);
   });
@@ -96,7 +111,11 @@ export async function setupDemo1() {
     if (err) console.log(err.message);
   });
 
-  console.log(chalk.blueBright(`Created Squeleto Demo 1 project at ${projectDirPath}`));
+  console.log(chalk.blueBright(`Created Squeleto Demo 3 project at ${projectDirPath}`));
+  console.log(chalk.yellowBright(`Make sure you read the readme.html file for `));
+  console.log(chalk.yellowBright(`properly setting up .env and connecting to `));
+  console.log(chalk.yellowBright(`Hathora`));
+  await open(path.join(projectDirPath, "/src/readme.html"), { app: { name: apps.browser } });
 }
 
 function toCamelCase(inputString) {

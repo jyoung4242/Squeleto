@@ -1,42 +1,42 @@
 {
   "name": "squeleto",
-  "version": "0.5.1",
-  "description": "Squeleto Game Library Setup Utility",
+  "version": "0.7.9",
+  "bin": "bin.js",
+  "description": "my new game project",
   "main": "index.js",
-  "type": "module",
-  "bin": {
-    "Squeleto": "bin.js"
-  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "build": "vite build",
     "dev": "vite",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "server": "ts-node --esm ./src/Server/server.ts"
   },
+  "type": "module",
   "keywords": [],
-  "author": "",
+  "author": "Mookie",
   "license": "ISC",
   "dependencies": {
     "@clack/prompts": "^0.6.3",
-    "@peasy-lib/peasy-assets": "^0.2.4",
-    "@peasy-lib/peasy-engine": "^0.3.0",
-    "@peasy-lib/peasy-input": "^0.2.0",
-    "@peasy-lib/peasy-states": "^0.1.2",
-    "@peasy-lib/peasy-ui": "^0.9.46",
-    "chalk": "^5.2.0",
+    "@hathora/client-sdk": "^1.2.0",
+    "@hathora/hathora-cloud-sdk": "^0.0.5",
+    "@hathora/server-sdk": "^1.1.0",
+    "@peasy-lib/peasy-assets": "latest",
+    "@peasy-lib/peasy-engine": "latest",
+    "@peasy-lib/peasy-input": "latest",
+    "@peasy-lib/peasy-states": "latest",
+    "@peasy-lib/peasy-ui": "latest",
+    "chalk": "*",
+    "clack": "^0.1.0",
+    "dotenv": "^16.3.1",
     "howler": "latest",
-    "shelljs": "^0.8.5",
-    "uuid": "^9.0.0"
+    "open": "^9.1.0",
+    "pako": "latest",
+    "path": "^0.12.7",
+    "uuid": "latest"
   },
   "devDependencies": {
-    "@types/howler": "^2.2.7",
-    "@types/uuid": "^9.0.2",
-    "json": "^11.0.0",
-    "typescript": "^5.1.3",
-    "vite": "^4.3.9"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/jyoung4242/Squeleto"
+    "json": "latest",
+    "ts-node": "latest",
+    "typescript": "latest",
+    "vite": "latest"
   }
 }
