@@ -15,24 +15,25 @@
   "author": "Mookie",
   "license": "ISC",
   "dependencies": {
-    "@peasy-lib/peasy-assets": "latest",
-    "@peasy-lib/peasy-input": "latest",
-    "@peasy-lib/peasy-ui": "latest",
-    "@peasy-lib/peasy-states": "latest",
-    "@peasy-lib/peasy-engine": "latest",
     "@hathora/client-sdk": "^1.2.0",
     "@hathora/hathora-cloud-sdk": "^0.0.5",
     "@hathora/server-sdk": "^1.1.0",
-    "howler": "latest",
+    "@peasy-lib/peasy-assets": "latest",
+    "@peasy-lib/peasy-engine": "latest",
+    "@peasy-lib/peasy-input": "latest",
+    "@peasy-lib/peasy-states": "latest",
+    "@peasy-lib/peasy-ui": "latest",
+    "chalk": "*",
+    "clack": "^0.1.0",
     "dotenv": "^16.3.1",
-    "uuid": "latest",
+    "howler": "latest",
     "pako": "latest",
-    "chalk": "*"
+    "uuid": "latest"
   },
   "devDependencies": {
     "json": "latest",
+    "ts-node": "latest",
     "typescript": "latest",
-    "vite": "latest",
-    "ts-node": "latest"
+    "vite": "latest"
   }
 }
