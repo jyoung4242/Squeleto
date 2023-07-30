@@ -3,9 +3,7 @@ import { stat, mkdir } from "node:fs/promises";
 import * as fs from "node:fs";
 import path from "node:path";
 import url from "node:url";
-import shell from "shelljs";
 import process from "node:process";
-import { log } from "@clack/prompts";
 
 export async function create(newProjectData) {
   //setup new file structure
