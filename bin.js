@@ -2,8 +2,6 @@
 import chalk from "chalk";
 import * as p from "@clack/prompts";
 import fs from "node:fs";
-import path from "node:path";
-import * as sh from "shelljs";
 import open from "open";
 
 import { create } from "./new.js";

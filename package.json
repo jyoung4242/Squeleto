@@ -15,6 +15,7 @@
   "author": "Mookie",
   "license": "ISC",
   "dependencies": {
+    "@clack/prompts": "^0.6.3",
     "@hathora/client-sdk": "^1.2.0",
     "@hathora/hathora-cloud-sdk": "^0.0.5",
     "@hathora/server-sdk": "^1.1.0",
@@ -27,7 +28,9 @@
     "clack": "^0.1.0",
     "dotenv": "^16.3.1",
     "howler": "latest",
+    "open": "^9.1.0",
     "pako": "latest",
+    "path": "^0.12.7",
     "uuid": "latest"
   },
   "devDependencies": {

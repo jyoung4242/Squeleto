@@ -3,7 +3,6 @@ import { stat, mkdir } from "node:fs/promises";
 import * as fs from "node:fs";
 import path from "node:path";
 import url from "node:url";
-import shell from "shelljs";
 
 export async function setupDemo1() {
   //setup new file structure
