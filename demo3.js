@@ -77,17 +77,17 @@ export async function setupDemo3() {
       "@peasy-lib/peasy-ui": "latest",
       "@peasy-lib/peasy-states": "latest",
       "@peasy-lib/peasy-engine": "latest",
-      "@hathora/client-sdk": "^1.2.0",
-      "@hathora/hathora-cloud-sdk": "^0.0.4",
-      "@hathora/server-sdk": "^1.1.0",
-      "dotenv": "^16.3.1",
+      "@hathora/client-sdk": "*",
+      "@hathora/hathora-cloud-sdk": "*",
+      "@hathora/server-sdk": "*",
+      "dotenv": "*",
       "uuid": "latest",
       "lodash": "latest",
-      "path": "^0.12.7"
+      "path": "*"
     },
     "devDependencies": {
       "@types/lodash": "latest",
-      "@types/node": "^20.4.5",
+      "@types/node": "*",
       "@types/uuid": "latest",
       "json": "latest",
       "typescript": "latest",

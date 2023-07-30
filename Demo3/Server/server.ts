@@ -97,7 +97,13 @@ const decoder = new TextDecoder("utf-8");
 const app: Application = {
   verifyToken: (token: string, roomId: string): Promise<UserId | undefined> => {
     return new Promise((resolve, reject) => {
-      const result = verifyJwt(token, process.env.APP_SECRET as string);
+      let result;
+      try {
+        result = verifyJwt(token, process.env.HATHORA_APP_SECRET as string);
+      } catch (error) {
+        console.warn("Failed to Verify Token");
+        reject();
+      }
 
       if (result == undefined) {
         console.warn("Failed to Verify Token");
@@ -110,7 +116,7 @@ const app: Application = {
     return new Promise(async resolve => {
       console.log("subscribeUser", roomId, userId);
       try {
-        const lobbyInfo = await lobbyClient.getLobbyInfo(process.env.APP_ID as string, roomId);
+        const lobbyInfo = await lobbyClient.getLobbyInfo(process.env.HATHORA_APP_ID as string, roomId);
         const lobbyState: LobbyState = lobbyInfo.state as LobbyState;
         const initialConfig: LobbyState = lobbyInfo.initialConfig as LobbyState;
 
@@ -331,7 +337,7 @@ const updateLobbyData = async (cap: number, numPlayers: number, roomID: string) 
   console.log("update lobby state: ", lobbyState);
 
   return await lobbyClient.setLobbyState(
-    process.env.APP_ID as string,
+    process.env.HATHORA_APP_ID as string,
     roomID,
     { state: lobbyState },
     { headers: { Authorization: `Bearer ${process.env.DEV_TOKEN}`, "Content-Type": "application/json" } }
