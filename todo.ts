@@ -3,7 +3,5 @@
 //TODO - particle system - for canvas
 //TODO - lighting
 //TODO - phsyics
-//TODO - camera lerp
 //TODO - localization
 //TODO - accessibility
-//TODO - hathora connection
