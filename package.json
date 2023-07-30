@@ -21,12 +21,13 @@
     "@peasy-lib/peasy-states": "latest",
     "@peasy-lib/peasy-engine": "latest",
     "@hathora/client-sdk": "^1.2.0",
-    "@hathora/hathora-cloud-sdk": "^0.0.4",
+    "@hathora/hathora-cloud-sdk": "^0.0.5",
     "@hathora/server-sdk": "^1.1.0",
     "howler": "latest",
     "dotenv": "^16.3.1",
     "uuid": "latest",
-    "pako": "latest"
+    "pako": "latest",
+    "chalk": "*"
   },
   "devDependencies": {
     "json": "latest",
