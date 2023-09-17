@@ -11,9 +11,17 @@
     "server": "ts-node --esm ./src/Server/server.ts"
   },
   "type": "module",
-  "keywords": [],
+  "keywords": [
+    "game engine",
+    "2d",
+    "gamedev"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/jyoung4242/Squeleto"
+  },
   "author": "Mookie",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "@clack/prompts": "^0.6.3",
     "@hathora/client-sdk": "^1.2.0",
