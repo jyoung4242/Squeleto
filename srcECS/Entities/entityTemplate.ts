@@ -8,7 +8,7 @@ export class TemplateEntity {
       components: {
         position: { x: 0, y: 0 },
         zindex: 0,
-        size: [16, 16],
+        size: { data: [16, 16] },
         opacity: 1,
       },
     });
