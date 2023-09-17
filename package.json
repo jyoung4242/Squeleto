@@ -1,6 +1,6 @@
 {
   "name": "squeleto",
-  "version": "0.7.9",
+  "version": "0.8.0",
   "bin": "bin.js",
   "description": "my new game project",
   "main": "index.js",
