@@ -13,7 +13,7 @@ export class Entity {
       transition: transform 0.25s;
     }
   </style>
-  <entity-layer class="entity" style="transform: translate3d(\${position.x}px,\${position.y}px, 0px); width: \${size.x}px; height: \${size.y}px;z-index:\${zindex}">
+  <entity-layer class="entity" style="transform: translate3d(\${position.x}px,\${position.y}px, 0px); width: \${size.x}px; height: \${size.y}px;z-index:\${zindex}; opacity: \${opacity}">
     < \${ component === } \${ component <=* components } >
   </entity-layer>
   `;

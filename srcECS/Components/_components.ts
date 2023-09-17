@@ -6,11 +6,13 @@
 //  [new Name(),... and all your other components follow]
 // }
 
-import { TemplateComp } from "./templateComponent";
+import { Position } from "./positionComponent";
+import { ZindexComp } from "./zindexComponent";
+import { SizeComp } from "./sizeComponent";
 
 // The template component is demonstrated by default, you'll probably
 // want to replace it
 
 export function LoadComponents() {
-  [new TemplateComp()];
+  [new Position(), new ZindexComp(), new SizeComp()];
 }

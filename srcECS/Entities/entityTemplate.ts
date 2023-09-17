@@ -6,8 +6,15 @@ export class TemplateEntity {
     return Entity.create({
       id: uuidv4(),
       components: {
-        foo: { data: "Welcome to Squeleto ECS" }, //this is tied to templateComponent.ts
+        position: { x: 0, y: 0 },
+        zindex: 0,
+        size: [16, 16],
+        opacity: 1,
       },
     });
   }
 }
+
+/*
+entities must have size, position, opacity, and zindex components as they are baked in properties in-line
+*/
