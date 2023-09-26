@@ -51,6 +51,12 @@ export class MultiPlayerInterface {
     AuthTypes?: Array<AuthenticationType>,
     local?: boolean
   ) {
+    /* let connectionInfo;
+    this.portnum = portNum || 9000;
+
+    if (local) connectionInfo = { host: "localhost", port: this.portnum, transportType: "tcp" as const };
+    else connectionInfo = undefined; //cloud */
+
     this.authTypes = AuthTypes as Array<AuthenticationType>;
     this.appID = app_id;
     this.connection = undefined;

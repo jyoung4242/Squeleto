@@ -1,6 +1,6 @@
 {
   "name": "squeleto",
-  "version": "0.8.3",
+  "version": "0.9.0",
   "bin": "bin.js",
   "description": "my new game project",
   "main": "index.js",
@@ -32,6 +32,7 @@
     "@peasy-lib/peasy-input": "latest",
     "@peasy-lib/peasy-states": "latest",
     "@peasy-lib/peasy-ui": "latest",
+    "@peasy-lib/peasy-viewport": "^0.1.1",
     "chalk": "*",
     "clack": "^0.1.0",
     "dotenv": "^16.3.1",

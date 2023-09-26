@@ -1,30 +1,27 @@
-//import Components
-import { Viewport } from "../_Squeleto/Viewport";
-import { StateManagement } from "../_Squeleto/StateManagement";
-import { UI } from "@peasy-lib/peasy-ui";
+// Library Modules
+import { Viewport } from "@peasy-lib/peasy-viewport";
+import { SceneManager } from "../_SqueletoECS/Scene";
+import "./style.css";
 
-/**************************************
- * Import and Configure Scenes
- **************************************/
-//import Scenes
-import { Game } from "./Scenes/game";
-let scenes = [Game];
+// Content Modules
+import { LoadComponents } from "./Components/_components";
 
-/**************************************
- * Import and configure game Viewport
- **************************************/
-export const datamodel = new StateManagement();
-const viewport = Viewport;
-viewport.initialize(datamodel, scenes, 400, "3.125/1.75");
-const template = `${viewport.template}`;
+// Scenes
+import { Test } from "./Scenes/demoScene";
 
-/**************************************
-//UI Rendering Engine instantiation
-**************************************/
+// Setting up Viewport with a HUD layer and the Game layer
+const VIEWPORT_WIDTH = 400;
+const ASPECT_RATIO = 16 / 9;
+const VIEWPORT_HEIGHT = VIEWPORT_WIDTH / ASPECT_RATIO;
 
-await UI.create(document.body, datamodel, template).attached;
+let viewport = Viewport.create({ size: { x: VIEWPORT_WIDTH, y: VIEWPORT_HEIGHT } });
+viewport.addLayers([{ name: "game", parallax: 0 }, { name: "hud" }]);
+SceneManager.viewport = viewport;
 
-/**************************************
-//set default scene on startup
-**************************************/
-viewport.setScene(0);
+// Components
+LoadComponents();
+
+//Load Scenes
+let sceneMgr = new SceneManager();
+sceneMgr.register(Test);
+sceneMgr.set("test");
