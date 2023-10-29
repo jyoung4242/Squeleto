@@ -10,10 +10,17 @@ export class Entity {
   <style>
     .entity {
       position: absolute;
-      transition: transform 0.25s;
+      top: 0;
+      left:0;
     }
   </style>
-  <entity-layer class="entity" style="transform: translate3d(\${position.x}px,\${position.y}px, 0px); width: \${size.x}px; height: \${size.y}px;z-index:\${zindex}; opacity: \${opacity}">
+  <entity-layer \${===render} class="entity" style="
+    transform: translate3d(\${position.x}px,\${position.y}px, 0px);
+    width: \${size.x}px;
+    height: \${size.y}px;
+    z-index:\${zindex}; 
+    opacity: \${opacity};
+    ">
     < \${ component === } \${ component <=* components } >
   </entity-layer>
   `;

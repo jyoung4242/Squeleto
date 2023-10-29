@@ -8,9 +8,6 @@ import url from "node:url";
 
 import { createECS } from "./CLI/newECS.js";
 import { setupDemo1 } from "./CLI/demo1.js";
-import { setupDemo2 } from "./CLI/demo2.js";
-import { setupDemo3 } from "./CLI/demo3.js";
-import { log } from "node:console";
 
 const { version } = JSON.parse(fs.readFileSync(new URL("package.json", import.meta.url), "utf-8"));
 let newProjedtData;
@@ -28,9 +25,7 @@ const projectType = await p.select({
   message: chalk.blueBright("Select your project option."),
   options: [
     { value: "newECS", label: chalk.blueBright("Start New Squeleto ECS Project"), hint: "Blank ECS Projet" },
-    //{ value: "d1", label: chalk.blueBright("Download Tutorial #1"), hint: "Top Down RPG" },
-    //{ value: "d2", label: chalk.blueBright("Download Tutorial #2"), hint: "Side View Platformer" },
-    //{ value: "d3", label: chalk.blueBright("Download Tutorial #3"), hint: "ECS Format - MultiPlayer Client/Server" },
+    { value: "d1", label: chalk.blueBright("Download RPG Tutorial"), hint: "Top Down RPG" },
     { value: "d4", label: chalk.blueBright("Open Docs"), hint: "Squeleto Documentation" },
   ],
 });
@@ -45,22 +40,14 @@ if (p.isCancel(projectType)) {
 
   process.exit(0);
 }
-
+const otherDIR_NAME = path.dirname(url.fileURLToPath(import.meta.url));
 switch (projectType) {
   case "newECS":
     await newProjectSurvey();
-    const otherDIR_NAME = path.dirname(url.fileURLToPath(import.meta.url));
-    //console.log("in bin", otherDIR_NAME);
     createECS(newProjedtData, otherDIR_NAME);
     break;
   case "d1":
-    setupDemo1();
-    break;
-  case "d2":
-    setupDemo2();
-    break;
-  case "d3":
-    setupDemo3();
+    setupDemo1(otherDIR_NAME);
     break;
   case "d4":
     open("https://jyoung4242.github.io/Squeleto-Docs/#/");

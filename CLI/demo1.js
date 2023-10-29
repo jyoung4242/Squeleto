@@ -4,10 +4,10 @@ import * as fs from "node:fs";
 import path from "node:path";
 import url from "node:url";
 
-export async function setupDemo1() {
+export async function setupDemo1(rootpath) {
   //setup new file structure
   //const DIR_NAME = path.dirname(url.fileURLToPath(import.meta.url));
-  const otherDIR_NAME = path.dirname(url.fileURLToPath(import.meta.url));
+  const otherDIR_NAME = rootpath; //path.dirname(url.fileURLToPath(import.meta.url));
   const DIR_NAME = process.cwd();
   //format project name
   let projectDirName = toCamelCase("Squeleto Demo 1");

@@ -1,6 +1,7 @@
 import { Entity } from "./entity";
 
 export class System {
+  template = ``;
   public static systems: Record<string, System> = {};
 
   constructor(public name: string) {

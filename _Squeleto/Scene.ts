@@ -5,9 +5,6 @@ import { Viewport } from "@peasy-lib/peasy-viewport";
 
 export class SceneManager extends States {
   public static viewport: Viewport;
-  constructor() {
-    super();
-  }
 }
 
 export class Scene extends State {
@@ -19,21 +16,11 @@ export class Scene extends State {
   public params: Array<any> = [];
   systems: Array<System> = [];
 
-  public async enter(previous: State | null, ...params: any[]) {
-    let layers = SceneManager.viewport.layers;
-    const game = layers.find(lyr => lyr.name == "game");
-    if (game) this.view = UI.create(game.element as HTMLElement, this, this.template);
-    if (this.view) await this.view.attached;
-    this.setScene = params[1];
-    this.params = [...params];
-    this.init();
-  }
+  public async enter(previous: State | null, ...params: any[]) {}
 
-  public init() {}
-  public exit() {}
   public leave() {
-    this.exit();
     this.view?.destroy();
+    SceneManager.viewport.removeLayers();
   }
 
   public initialize() {}
