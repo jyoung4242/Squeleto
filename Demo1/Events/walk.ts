@@ -1,46 +1,112 @@
-import { direction } from "../../parkinglog/CollisionManager";
-import { GameEvent } from "../../parkinglog/EventManager";
-import { GameObject } from "../../parkinglog/GameObject";
-import { Signal } from "../../_Squeleto/Signals";
+/*****************************************************************************
+ * Event: Walk
+ * Components Required: VelocityComponent,SpriteSheetComponent,PositionComponent
+ *
+ * Signals: none
+ *
+ * Parameters:
+ * [0]- <string> - this.direction - string designating which direction to walk
+ * [1]- <number> - this.distance - number that dictates how far to walk (pixels)
+ * [2]- <number> - this.speed - number that dictates how FAST to walk
+ *
+ * Description:
+ * based on the parameters passed on the creation of Event, allows the entity to
+ * move until it hits its 'target' position, which is based on direction and distance
+ * this way if collisions block a movement, this doesn't resolve until destination reached
+ ******************************************************************************/
 
-/**
- * This is a event for the asynchronous 'walking' of the player or NPC
- * this event engages a native 'startBehavior' method of the GameObject
- * and passes the 'walk' string as the behavior parameter, and a distance number (pixels)
- * this resolves from a Signal from the gameobject that the 'walkCompleted'
- * has been completed
- */
+import { GameEvent } from "../Systems/Events";
+import { Entity } from "../../_Squeleto/entity";
+import { Vector } from "../../_Squeleto/Vector";
+import { VelocityComponent } from "../Components/velocity";
+import { SpriteSheetComponent } from "../Components/spritesheet";
+import { PositionComponent } from "../Components/positionComponent";
+
+export type direction = "right" | "left" | "up" | "down";
 
 export class WalkEvent extends GameEvent {
-  who: GameObject | undefined;
   direction: direction;
+  who: (Entity & VelocityComponent & SpriteSheetComponent & PositionComponent) | null;
+  targetValue: number = 0;
   distance: number;
-  walkSignal: Signal | null;
+  speed: number;
   resolution: ((value: void | PromiseLike<void>) => void) | undefined;
 
-  constructor(direction: direction, distance: number) {
-    super("walk");
-    this.who = undefined;
-    this.direction = direction;
-    this.distance = distance;
-    this.walkSignal = null;
+  constructor(who: (Entity & VelocityComponent & SpriteSheetComponent & PositionComponent) | null, params: [...any]) {
+    super(who, params);
+    this.who = who;
+    this.direction = params[0];
+    this.distance = params[1];
+    this.speed = params[2];
   }
 
-  init(who: GameObject): Promise<void> {
+  update(): void {
+    if (this.who) {
+      switch (this.direction) {
+        case "right":
+          if (this.who.position.x >= this.targetValue) {
+            if (this.resolution) this.resolution();
+            this.eventStatus = "complete";
+            this.who.velocity = new Vector(0, 0);
+            this.who.spritesheet[1].currentSequence = `idle-${this.direction}`;
+          }
+          break;
+        case "left":
+          if (this.who.position.x <= this.targetValue) {
+            if (this.resolution) this.resolution();
+            this.eventStatus = "complete";
+            this.who.velocity = new Vector(0, 0);
+            this.who.spritesheet[1].currentSequence = `idle-${this.direction}`;
+          }
+          break;
+        case "up":
+          if (this.who.position.y <= this.targetValue) {
+            if (this.resolution) this.resolution();
+            this.eventStatus = "complete";
+            this.who.velocity = new Vector(0, 0);
+            this.who.spritesheet[1].currentSequence = `idle-${this.direction}`;
+          }
+          break;
+        case "down":
+          if (this.who.position.y >= this.targetValue) {
+            if (this.resolution) this.resolution();
+            this.eventStatus = "complete";
+            this.who.velocity = new Vector(0, 0);
+            this.who.spritesheet[1].currentSequence = `idle-${this.direction}`;
+          }
+          break;
+      }
+    }
+  }
+
+  init(): Promise<void> {
+    this.eventStatus = "running";
+
     return new Promise(resolve => {
-      this.walkSignal = new Signal("walkCompleted");
-      this.walkSignal.listen(this.completeHandler);
-      this.who = who;
-      this.who.startBehavior("walk", this.direction, this.distance);
       this.resolution = resolve;
+      if (this.who)
+        switch (this.direction) {
+          case "right":
+            this.who.velocity = new Vector(this.speed, 0);
+            this.who.spritesheet[1].currentSequence = "walk-right";
+            this.targetValue = this.who.position.x + this.distance;
+            break;
+          case "left":
+            this.who.velocity = new Vector(-this.speed, 0);
+            this.who.spritesheet[1].currentSequence = "walk-left";
+            this.targetValue = this.who.position.x - this.distance;
+            break;
+          case "up":
+            this.who.velocity = new Vector(0, -this.speed);
+            this.who.spritesheet[1].currentSequence = "walk-up";
+            this.targetValue = this.who.position.y - this.distance;
+            break;
+          case "down":
+            this.who.velocity = new Vector(0, this.speed);
+            this.who.spritesheet[1].currentSequence = "walk-down";
+            this.targetValue = this.who.position.y + this.distance;
+            break;
+        }
     });
   }
-
-  completeHandler = (e: any) => {
-    if (e.detail.who === this.who?.id) {
-      if (this.walkSignal) this.walkSignal.stopListening;
-      this.walkSignal = null;
-      if (this.resolution) this.resolution();
-    }
-  };
 }

@@ -1,5 +1,6 @@
-import { GameEvent } from "../../parkinglog/EventManager";
-import { GameObject } from "../../parkinglog/GameObject";
+import { Entity } from "../../_Squeleto/entity";
+import { GameEvent } from "../Systems/Events";
+import chalk from "chalk";
 
 /**
  * This is a event for the asynchronous console logging
@@ -9,20 +10,27 @@ import { GameObject } from "../../parkinglog/GameObject";
  */
 
 export class LogEvent extends GameEvent {
-  who: GameObject | undefined;
-  message: string;
-  resolution: ((value: void | PromiseLike<void>) => void) | undefined;
+  message: string = "";
+  color: string = "#FFFFFF";
 
-  constructor(message: string) {
-    super("log");
-    this.who = undefined;
-    this.message = message;
+  constructor(who: Entity | string | null, params: [...any]) {
+    super(who, params);
+    this.event = "LogEvent";
+    this.message = params[0];
+    this.color = params[1];
   }
 
-  init(who: GameObject): Promise<void> {
+  static create(who: Entity | string | null, params: [...any]): LogEvent {
+    return new LogEvent(who, params);
+  }
+
+  init(entities: Entity[]): Promise<void> {
+    this.eventStatus = "running";
     return new Promise(resolve => {
-      this.who = who;
-      console.log(`${this.who.name} logged: ${this.message}`);
+      let msgTemplate = chalk.hex(this.color);
+      if (!this.who) console.log(msgTemplate(`logged: ${this.message}`));
+      else console.log(msgTemplate(`${this.who} logged: ${this.message}`));
+      this.eventStatus = "complete";
       resolve();
     });
   }
