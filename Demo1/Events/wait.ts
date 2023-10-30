@@ -1,5 +1,5 @@
-import { GameEvent } from "../../_Squeleto/EventManager";
-import { GameObject } from "../../_Squeleto/GameObject";
+import { Entity } from "../../_Squeleto/entity";
+import { GameEvent } from "../Systems/Events";
 
 /**
  * This is a event for the asynchronous delay
@@ -8,22 +8,24 @@ import { GameObject } from "../../_Squeleto/GameObject";
  */
 
 export class WaitEvent extends GameEvent {
-  who: GameObject | undefined;
-  time: number;
-  resolution: ((value: void | PromiseLike<void>) => void) | undefined;
-
-  constructor(time: number) {
-    super("log");
-    this.who = undefined;
-    this.time = time;
+  duration: number = 0;
+  constructor(who: Entity | null, params: [...any]) {
+    super(who, params);
+    this.duration = params[0];
+    this.event = "WaitEvent";
   }
 
-  init(who: GameObject): Promise<void> {
+  static create(who: Entity | null, params: [...any]): WaitEvent {
+    return new WaitEvent(who, params);
+  }
+
+  public init(): Promise<void> {
+    this.eventStatus = "running";
     return new Promise(resolve => {
-      this.who = who;
       setTimeout(() => {
+        this.eventStatus = "complete";
         resolve();
-      }, this.time);
+      }, this.duration);
     });
   }
 }

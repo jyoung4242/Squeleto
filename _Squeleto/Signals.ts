@@ -1,11 +1,11 @@
-import { GameObject } from "./GameObject";
+import { Entity } from "./entity";
 
 export class Signal {
   controller: AbortController | undefined | null;
   signalName: string;
-  sender: string | GameObject;
+  sender: string | Entity;
   callback: Function | undefined;
-  constructor(name: string, from?: string | GameObject) {
+  constructor(name: string, from?: string | Entity) {
     this.signalName = name;
     from ? (this.sender = from) : (this.sender = "");
   }

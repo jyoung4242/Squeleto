@@ -1,31 +1,31 @@
-//import Components
-import { Viewport } from "../_Squeleto/Viewport";
-import { StateManagement } from "../_Squeleto/StateManagement";
-import { UI } from "@peasy-lib/peasy-ui";
+// Library Modules
+import { Viewport } from "@peasy-lib/peasy-viewport";
+import { SceneManager } from "../_Squeleto/Scene";
+import "./style.css";
 
-/**************************************
- * Import and Configure Scenes
- **************************************/
-//import Scenes
+// Content Modules
+import { LoadComponents } from "./Components/_components";
+
+// Scenes
 import { Login } from "./Scenes/login";
 import { Game } from "./Scenes/game";
-let scenes = [Login, Game];
 
-/**************************************
- * Import and configure game Viewport
- **************************************/
-export const datamodel = new StateManagement();
-const viewport = Viewport;
-viewport.initialize(datamodel, scenes, 400, "3.125/1.75");
-const template = `${viewport.template}`;
+//StoryFlags(global)
+import { StoryFlagSystem } from "./Systems/StoryFlags";
 
-/**************************************
-//UI Rendering Engine instantiation
-**************************************/
+// Setting up Viewport
+export const VIEWPORT_WIDTH = 400;
+const ASPECT_RATIO = 16 / 9;
+export const VIEWPORT_HEIGHT = VIEWPORT_WIDTH / ASPECT_RATIO;
+SceneManager.viewport = Viewport.create({ size: { x: VIEWPORT_WIDTH, y: VIEWPORT_HEIGHT } });
 
-await UI.create(document.body, datamodel, template).attached;
+// Components
+LoadComponents();
 
-/**************************************
-//set default scene on startup
-**************************************/
-viewport.setScene(0);
+//Setup Storyflags
+StoryFlagSystem.init();
+
+//Load Scenes
+let sceneMgr = new SceneManager();
+sceneMgr.register(Login, Game);
+sceneMgr.set("Login");
