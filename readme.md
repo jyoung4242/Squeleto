@@ -34,3 +34,8 @@ the CLI tool will download a tutorial demo for you to help learn the library API
 Squeleto is powered by Vite and Peasy-Lib
 [Link to Peasy GitHub](https://github.com/peasy-lib/peasy-lib/tree/main)
 
+# Contributing
+
+The best way to contribute is to create your own unique components and systems that can be shared with others...
+If you use Squeleto to create a game and want to share your creative new ideas, please submit a pull request with the code and details and i will review
+
