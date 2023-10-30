@@ -1,12 +1,15 @@
+# Welcome to Squeleto
+
 [![Twitter URL](https://img.shields.io/twitter/url/https/twitter.com/bukotsunikki.svg?style=social&label=Follow%20%40jyoung424242)](https://twitter.com/jyoung424242)
 
-<h4 align="center">Squeleto Game Library Setup Utility</h4>
+> Squeleto is an simple 2d game framework built in Typescript and powered by Vite.
 
-![Screenshot](https://github.com/jyoung4242/Squeleto/raw/main/Squeleto.png?raw=true)
+Squeleto is a spin off of 'Skeleton' in spanish. 'El Squeleto' as a framework which is intended to provide a highlevel skeleton or
+abstraction for your game development needs.
 
-# 👋 Introducing `Squeleto`
+# READ THE DOCS
 
-`Squeleto` is an simple utility to scaffold up a game using the Squeleto 2d game library....
+[API DOCUMENTATION](https://jyoung4242.github.io/Squeleto-Docs/#/)
 
 # 🔥 Getting started
 
@@ -16,24 +19,18 @@
 
 the CLI tool will download a tutorial demo for you to help learn the library API's
 
-<!-- # Demo on Youtube
-
-- https://youtu.be/m1zYOhrmdKk Javascript example
-- https://youtu.be/IRboPZac_Q8 Typescript example -->
-
 # 🔥 Features
 
 `Squeleto` As a Typescript library, it can allow you to build out multi-scene games with features that include:
 
-- Level Builder
-- Sprite and Spritesheet support, with animations
-- Map/Level Management
-- Camera System
-- Y-sorting
-- Game Objects
-- Sound API
-- Game State Management
-- Quest and Story Flags
-- Dialog System
+- CLI tool to help get started
+- Scene Templates
+- Entity Templates
+- System Templates
+- Signals are pub/sub style information connections to link different parts of your code
+- Multi-player library, there is a pre-configured module to help link to Hathora, a multi-player framework
+- Vector module, assists with your typical vector style math, with helpful methods
 
-Squeleto is powered by Vite
+Squeleto is powered by Vite and Peasy-Lib
+[Link to Peasy GitHub](https://github.com/peasy-lib/peasy-lib/tree/main)
+
