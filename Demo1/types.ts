@@ -1,0 +1,3 @@
+export const VIEWPORT_WIDTH = 400;
+export const ASPECT_RATIO = 16 / 9;
+export const VIEWPORT_HEIGHT = VIEWPORT_WIDTH / ASPECT_RATIO;

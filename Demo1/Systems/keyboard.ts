@@ -44,6 +44,7 @@ export class KeyboardSystem extends System {
     this.interactSignal = new Signal("interact");
     this.pauseSignal = new Signal("pauseEngine");
     this.cutsceneSignal = new Signal("cutscene");
+
     this.cutsceneSignal.listen((details: CustomEvent) => {
       this.isCutscenePlaying = details.detail.params[0];
     });

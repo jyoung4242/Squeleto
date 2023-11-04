@@ -10,7 +10,7 @@ import { Vector } from "../../_Squeleto/Vector";
 import { Entity } from "../../_Squeleto/entity";
 import { System } from "../../_Squeleto/system";
 import { Signal } from "../../_Squeleto/Signals";
-import { VIEWPORT_HEIGHT, VIEWPORT_WIDTH } from "../main";
+import { VIEWPORT_HEIGHT, VIEWPORT_WIDTH } from "../types";
 
 // Next import your specific game content (Maps,etc...)
 import { Kitchen } from "../Maps/kitchen";
@@ -35,16 +35,20 @@ import { EventSystem } from "../Systems/Events";
 import { StoryFlagSystem } from "../Systems/StoryFlags";
 import { interactionSystem } from "../Systems/Interactions";
 import { Dialogue } from "../Systems/dialog";
+import { PassiveSoundSystem } from "../Systems/passiveSound";
+
+export let loading: any;
 
 // All Squeleto Scenes are an extension of the Scene Class
 export class Game extends Scene {
   name: string = "Game";
+  public isLoaded = false;
 
   // **************************************
   // Loading Signals
   // **************************************
   pauseSignal: Signal = new Signal("pauseEngine");
-
+  public engine: any;
   entities: Entity[] = [];
   Systems: System[] = [];
 
@@ -56,123 +60,131 @@ export class Game extends Scene {
   bgm: Chiptune | undefined | null;
 
   public async enter(previous: State | null, ...params: any[]): Promise<void> {
-    // **************************************
-    // Loading Audio
-    // **************************************
-    Audio.initialize({ listener: { position: { x: SceneManager.viewport.half.x, y: SceneManager.viewport.half.y } } });
+    return new Promise(async resolve => {
+      // **************************************
+      // Loading Audio
+      // **************************************
+      try {
+        Audio.initialize({ listener: { position: { x: SceneManager.viewport.half.x, y: SceneManager.viewport.half.y } } });
+      } catch (error) {
+        console.error(error);
+      }
 
-    // **************************************
-    // Loading Assets
-    // **************************************
-    Assets.initialize({ src: "../src/Assets/" });
-    await Assets.load([
-      "lower.png",
-      "DemoUpper.png",
-      "hero.png",
-      "shadow.png",
-      "counter.png",
-      "bookshelf.png",
-      "npc2.png",
-      "outsideUpper.png",
-      "outsidemod.png",
-      "planter.png",
-      "pizzazone.png",
-      "step.wav",
-      "error.wav",
-      "door.mp3",
-      "spark.png",
-      "spark.mp3",
-      "npcAvatar.png",
-      "heroAvatar.png",
-      { name: "charge", src: "charge.wav" },
-      { name: "walk", src: "walk.wav" },
-    ]);
+      // **************************************
+      // Loading Assets
+      // **************************************
+      Assets.initialize({ src: "./src/Assets/" });
 
-    // *************************************
-    // Setup Viewport Layers
-    // this uses the peasy-ui UI.create() method
-    // *************************************
+      loading = await Assets.load([
+        "lower.png",
+        "DemoUpper.png",
+        "hero.png",
+        "shadow.png",
+        "counter.png",
+        "bookshelf.png",
+        "npc2.png",
+        "outsideUpper.png",
+        "outsidemod.png",
+        "npcAvatar.png",
+        "heroAvatar.png",
+        "planter.png",
+        "pizzazone.png",
+        { name: "charge", src: "charge.wav" },
+        { name: "step", src: "step.wav" },
+        { name: "walk", src: "walk.wav" },
+      ]);
 
-    SceneManager.viewport.addLayers([
-      {
-        name: "maplower",
-        parallax: 0,
-        image: Assets.image(Kitchen.lower).src,
-        size: { x: 192, y: 192 },
-        position: { x: 192 / 2, y: 192 / 2 },
-      },
-      { name: "game", parallax: 0, size: { x: 0, y: 0 } },
-      {
-        name: "mapupper",
-        parallax: 0,
-        image: Assets.image(Kitchen.upper).src,
-        size: { x: 192, y: 192 },
-        position: { x: 192 / 2, y: 192 / 2 },
-      },
+      // *************************************
+      // Setup Viewport Layers
+      // this uses the peasy-ui UI.create() method
+      // *************************************
 
-      {
-        name: "dialog",
-        size: { x: VIEWPORT_WIDTH, y: VIEWPORT_HEIGHT },
-      },
-    ]);
-    let layers = SceneManager.viewport.layers;
+      SceneManager.viewport.addLayers([
+        {
+          name: "maplower",
+          parallax: 0,
+          image: Assets.image(Kitchen.lower).src,
+          size: { x: 192, y: 192 },
+          position: { x: 192 / 2, y: 192 / 2 },
+        },
+        { name: "game", parallax: 0, size: { x: 0, y: 0 } },
+        {
+          name: "mapupper",
+          parallax: 0,
+          image: Assets.image(Kitchen.upper).src,
+          size: { x: 192, y: 192 },
+          position: { x: 192 / 2, y: 192 / 2 },
+        },
 
-    const game = layers.find(lyr => lyr.name == "game");
-    if (game) this.view = UI.create(game.element as HTMLElement, this, this.template);
-    if (this.view) await this.view.attached;
+        {
+          name: "dialog",
+          size: { x: VIEWPORT_WIDTH, y: VIEWPORT_HEIGHT },
+        },
+      ]);
+      let layers = SceneManager.viewport.layers;
 
-    const dialog = layers.find(lyr => lyr.name == "dialog");
-    if (dialog) UI.create(dialog.element, new Dialogue(), Dialogue.template);
+      const game = layers.find(lyr => lyr.name == "game");
+      if (game) this.view = UI.create(game.element as HTMLElement, this, this.template);
+      //if (this.view) await this.view.attached;
 
-    // **************************************
-    // Load Entities
-    // **************************************
-    this.entities.push(bookshelfEntity.create(new Vector(48, 48)));
-    this.entities.push(CounterEntity.create(new Vector(112, 96)));
-    let hero = HeroEntity.create(new Vector(60, 60));
-    this.entities.push(hero);
-    this.entities.push(NPCEntity.create(new Vector(32, 96)));
-    this.entities.push(PlanterEntity.create(new Vector(112, 128)));
-    this.entities.push(PizzaSignEntity.create(new Vector(144, 156)));
+      const dialog = layers.find(lyr => lyr.name == "dialog");
+      if (dialog) UI.create(dialog.element, new Dialogue(), Dialogue.template);
 
-    // **************************************
-    // setup collision system defaults
-    // **************************************
-    const dc = new CollisionDetectionSystem([Kitchen, OutsideMap], "kitchen", false);
-    dc.loadEntities(this.entities as ColliderEntity[]);
+      // **************************************
+      // Load Entities
+      // **************************************
+      this.entities.push(bookshelfEntity.create(new Vector(48, 48)));
+      this.entities.push(CounterEntity.create(new Vector(112, 96)));
+      let hero = HeroEntity.create(new Vector(60, 60));
+      this.entities.push(hero);
+      this.entities.push(NPCEntity.create(new Vector(32, 96)));
+      this.entities.push(PlanterEntity.create(new Vector(112, 128)));
+      this.entities.push(PizzaSignEntity.create(new Vector(144, 156)));
 
-    // **************************************
-    // Load Systems into systems array
-    // **************************************
-    this.Systems.push(
-      new CameraFollowSystem(),
-      dc,
-      new MovementSystem(),
-      new KeyboardSystem(),
-      new AnimatedSpriteSystem(),
-      new RenderSystem("kitchen"),
-      new EventSystem(),
-      new interactionSystem()
-    );
+      // **************************************
+      // setup collision system defaults
+      // **************************************
+      const dc = new CollisionDetectionSystem([Kitchen, OutsideMap], "kitchen", false);
+      dc.loadEntities(this.entities as ColliderEntity[]);
 
-    // **************************************
-    // Load BGM
-    // **************************************
-    this.bgm = new Chiptune("0x090100700135583f70");
-    this.bgm.attenuate(0.002); //.1 is max, 0 is mute
+      // **************************************
+      // Load Systems into systems array
+      // **************************************
+      this.Systems.push(
+        new CameraFollowSystem(),
+        dc,
+        new MovementSystem(),
+        new KeyboardSystem(),
+        new AnimatedSpriteSystem(),
+        new RenderSystem("kitchen"),
+        new EventSystem(),
+        new interactionSystem(),
+        new PassiveSoundSystem()
+      );
 
-    // ***********************************************************
-    // Define initial storyflags for quests and event conditions
-    // ***********************************************************
-    StoryFlagSystem.setStoryFlagValue("startOfGame", true);
+      // **************************************
+      // Load BGM
+      // **************************************
+      this.bgm = new Chiptune("0x090100700135583f70");
+      this.bgm.attenuate(0.001); //.1 is max, 0 is mute
 
-    // **************************************
-    // START your engines!
-    // **************************************
-    const engine = Engine.create({ started: true, fps: 60, callback: this.update });
-    this.pauseSignal.listen(() => {
-      console.log("pausing");
-      engine.pause();
+      // ***********************************************************
+      // Define initial storyflags for quests and event conditions
+      // ***********************************************************
+      StoryFlagSystem.setStoryFlagValue("startOfGame", true);
+
+      // **************************************
+      // START your engines!
+      // **************************************
+      this.engine = Engine.create({ started: true, fps: 60, callback: this.update });
+      this.pauseSignal.listen(() => {
+        console.log("pausing");
+        this.engine.pause();
+      });
+      this.isLoaded = true;
+      console.log("resolving scene change");
+
+      resolve();
     });
   }
 

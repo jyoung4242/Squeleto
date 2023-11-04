@@ -16,11 +16,20 @@ import { PositionComponent } from "../Components/positionComponent";
 import { VelocityComponent } from "../Components/velocity";
 import { KeyboardComponent } from "../Components/keyboard";
 import { Vector } from "../../_Squeleto/Vector";
+import { NameComponent } from "../Components/name";
+import { PassiveSoundComponent } from "../Components/passiveSound";
 
-export type MovementEntity = Entity & PositionComponent & VelocityComponent & ColliderComponent & KeyboardComponent;
+export type MovementEntity = Entity &
+  PositionComponent &
+  VelocityComponent &
+  ColliderComponent &
+  KeyboardComponent &
+  NameComponent &
+  PassiveSoundComponent;
 
 export class MovementSystem extends System {
   isCutscenePlaying: boolean = false;
+  updateState = new Signal("changePassiveState");
   cutsceneSignal: Signal = new Signal("cutscene");
   public constructor() {
     super("movement");
@@ -50,6 +59,9 @@ export class MovementSystem extends System {
       }
 
       if (!adjustedVelocity.zero) {
+        if (entity.name == "hero" && entity.passiveSound.currentState == "default") {
+          this.updateState.send([entity.id, "walk"]);
+        }
         entity.position = entity.position.add(entity.velocity);
         const cboyPosition = entity.position.add(entity.collider.offset);
         entity.collider.colliderBody?.setPosition(cboyPosition.x, cboyPosition.y);
@@ -58,6 +70,12 @@ export class MovementSystem extends System {
             entity.position.x + entity.collider.interactor.offset.x,
             entity.position.y + entity.collider.interactor.offset.y
           );
+      } else {
+        //console.log("no velocity");
+
+        if (entity.name == "hero" && entity.passiveSound.currentState != "default") {
+          this.updateState.send([entity.id, "default"]);
+        }
       }
     });
   }

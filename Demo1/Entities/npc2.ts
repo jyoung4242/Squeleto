@@ -84,6 +84,13 @@ export class NPCEntity {
             ],
           },
         },
+        passiveSound: {
+          data: {
+            id: id,
+            volume: 0.8,
+            states: { walk: { source: "step", loop: true } },
+          },
+        },
         spritesheet: {
           data: [
             { src: Assets.image("shadow").src, offset: { x: 0, y: 0 }, size: { x: 32, y: 32 }, framesize: { x: 32, y: 32 } },

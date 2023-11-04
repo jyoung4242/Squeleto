@@ -72,7 +72,13 @@ export class HeroEntity {
             map: myMap,
           },
         },
-
+        passiveSound: {
+          data: {
+            id: id,
+            volume: 1,
+            states: { walk: { source: "walk", loop: true } },
+          },
+        },
         map: myMap,
         spritesheet: {
           data: [

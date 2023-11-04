@@ -25,6 +25,10 @@ export class PlaySoundEvent extends GameEvent {
   }
 
   init(entities: Entity[]): Promise<void> {
+    if (this.sound) {
+      Audio.removeSound(this.sound);
+    }
+
     this.eventStatus = "running";
     this.sound = Audio.addSound({
       name: this.source,
@@ -33,16 +37,8 @@ export class PlaySoundEvent extends GameEvent {
       type: "effect",
       autoplay: true,
     });
-    setTimeout(() => {
-      console.log("removing sound");
-      this.sound?.stop();
-      Audio.removeSound(this.sound as Sound);
-    }, 5000);
 
     return new Promise(resolve => {
-      if (this.sound) {
-        this.sound.play();
-      }
       this.eventStatus = "complete";
       resolve();
     });

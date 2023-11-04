@@ -1,6 +1,7 @@
 // Library Modules
 import { Viewport } from "@peasy-lib/peasy-viewport";
 import { SceneManager } from "../_Squeleto/Scene";
+import { VIEWPORT_WIDTH, VIEWPORT_HEIGHT } from "./types";
 import "./style.css";
 
 // Content Modules
@@ -14,9 +15,6 @@ import { Game } from "./Scenes/game";
 import { StoryFlagSystem } from "./Systems/StoryFlags";
 
 // Setting up Viewport
-export const VIEWPORT_WIDTH = 400;
-const ASPECT_RATIO = 16 / 9;
-export const VIEWPORT_HEIGHT = VIEWPORT_WIDTH / ASPECT_RATIO;
 SceneManager.viewport = Viewport.create({ size: { x: VIEWPORT_WIDTH, y: VIEWPORT_HEIGHT } });
 
 // Components
@@ -25,7 +23,13 @@ LoadComponents();
 //Setup Storyflags
 StoryFlagSystem.init();
 
-//Load Scenes
 let sceneMgr = new SceneManager();
+
 sceneMgr.register(Login, Game);
 sceneMgr.set("Login");
+
+//for debugging purposes
+setTimeout(() => {
+  let test = sceneMgr.get();
+  console.log(test);
+}, 10);

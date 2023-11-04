@@ -7,7 +7,9 @@ import { UI } from "@peasy-lib/peasy-ui";
 import { Scene, SceneManager } from "../../_Squeleto/Scene";
 
 export class Login extends Scene {
-  name: string = "Login";
+  public name: string = "Login";
+  layers: any;
+  layer: any;
   start = () => {
     this.states.set("Game");
   };
@@ -18,11 +20,17 @@ export class Login extends Scene {
     </div>
   </scene-layer>`;
   public async enter(): Promise<void> {
+    let start = performance.now();
+
     //Viewport Layer Control
-    SceneManager.viewport.addLayers([{ name: "game", parallax: 0 }]);
-    let layers = SceneManager.viewport.layers;
-    const game = layers.find(lyr => lyr.name == "game");
-    if (game) this.view = UI.create(game.element as HTMLElement, this, this.template);
-    if (this.view) await this.view.attached;
+    SceneManager.viewport.addLayers([{ name: "login", parallax: 0 }]);
+    this.layers = SceneManager.viewport.layers;
+    this.layer = this.layers.find((lyr: any) => lyr.name == "login");
+    if (this.layer) this.view = UI.create(this.layer.element as HTMLElement, this, this.template);
+    //if (this.view) await this.view.attached;
+  }
+
+  public exit() {
+    SceneManager.viewport.removeLayers(this.layer);
   }
 }
